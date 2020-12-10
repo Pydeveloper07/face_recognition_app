@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QLabel, QToolBar, \
-    QPushButton, QWidget, QSpacerItem, QDialog, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QLabel, \
+    QPushButton, QWidget, QSpacerItem, QStackedWidget, QGridLayout
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
 from models import subject_list
@@ -17,6 +17,8 @@ class DashboardWindow(QWidget):
         self.init_ui()
         self.init_topbar()
         self.init_stacked_windows()
+        self.init_home()
+        self.stacked_widget.setCurrentIndex(len(subject_list))
 
     def init_subject_list(self):
         for subject in subject_list:
@@ -63,9 +65,29 @@ class DashboardWindow(QWidget):
                                    "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui "
                                    "officia deserunt mollit anim id est laborum.")
             label_content.setWordWrap(True)
+            label_content.setAlignment(QtCore.Qt.AlignTop)
             close_btn = QPushButton("Close this subject")
-            close_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+            close_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+            close_btn.setFixedHeight(60)
+            close_btn.setIcon(QtGui.QIcon("img/close.png"))
+            close_btn.setIconSize(QtCore.QSize(40, 40))
             vbox.addWidget(label_header)
             vbox.addWidget(label_content)
             vbox.addWidget(close_btn, alignment=QtCore.Qt.AlignRight)
             self.stacked_widget.insertWidget(subject["id"], page)
+
+    def init_home(self):
+        page = QWidget()
+        vbox = QVBoxLayout()
+        page.setLayout(vbox)
+        label_header = QLabel("All courses".upper())
+        label_header.setAlignment(QtCore.Qt.AlignCenter)
+        label_header.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+        vbox.addWidget(label_header)
+        grid = QGridLayout()
+        vbox.addLayout(grid)
+        row = 0
+        col = 0
+        for i in range(len(self.subject_list)):
+
+        self.stacked_widget.insertWidget(len(self.subject_list), page)
