@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, \
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QMessageBox
 from PyQt5 import uic, QtCore, QtGui
+import BrainOfFront
 
 import WindowLoader
 import sys
@@ -42,12 +43,12 @@ class ControllerLoginWindow(QDialog):
         #     "username_err": "Shouldn't be blank",
         #     "password_err": ""
         # }
-        if True:    #  if auth["valid"]:
-            self.close()
-            self.window_loader.load_camera_window()
-        else:
-            self.fdbck_uname_label.setText(auth["username_err"])
-            self.fdbck_passw_label.setText(auth["password_err"])
+        # if True:    #  if auth["valid"]:
+        #     self.close()
+        #     self.window_loader.load_camera_window()
+        # else:
+        #     self.fdbck_uname_label.setText(auth["username_err"])
+        #     self.fdbck_passw_label.setText(auth["password_err"])
 
     # Authentication goes here
     def authenticate(self, username, password):
@@ -61,7 +62,10 @@ class ControllerLoginWindow(QDialog):
             if not password:
                 password_err = "This field is required"
         else:
-            #Kamronbek Rustamov your work goes here
+            BrainOfFront.SendData(username + " " + password)
+            retValue = BrainOfFront.ReadData()#<--Use this for front logic
+            print(retValue)
+            #Kamronbek Rustamov your work goes  somewhere else
             pass
         if not valid:
             auth = {
