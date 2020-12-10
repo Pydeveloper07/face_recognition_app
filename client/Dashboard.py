@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QLabel, \
-    QPushButton, QWidget, QSpacerItem, QStackedWidget, QGridLayout
+    QPushButton, QWidget, QSpacerItem, QStackedWidget, QGridLayout, QButtonGroup, \
+    QFrame
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
 from models import subject_list
@@ -13,6 +14,7 @@ class DashboardWindow(QWidget):
         self.init_subject_list()
         self.stacked_widget = QStackedWidget(self)
         self.vbox = QVBoxLayout()
+        self.btn_group = QButtonGroup()
         self.setLayout(self.vbox)
         self.init_ui()
         self.init_topbar()
@@ -78,16 +80,67 @@ class DashboardWindow(QWidget):
 
     def init_home(self):
         page = QWidget()
+        page.setStyleSheet("background-color:white")
         vbox = QVBoxLayout()
         page.setLayout(vbox)
         label_header = QLabel("All courses".upper())
+        label_header.setStyleSheet("font-weight:bold; font-size: 20pt; color:green;"
+                                   "letter-spacing: 5px")
         label_header.setAlignment(QtCore.Qt.AlignCenter)
         label_header.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         vbox.addWidget(label_header)
         grid = QGridLayout()
+        grid.setSpacing(20)
         vbox.addLayout(grid)
         row = 0
         col = 0
-        for i in range(len(self.subject_list)):
+        for i in range(len(subject_list)):
+            frame = QFrame()
+            frame.setStyleSheet("border: 3px solid #4589ff; border-radius:10px")
+            f_vbox = QVBoxLayout()
+            frame.setLayout(f_vbox)
+            f_hbox = QHBoxLayout()
+            pixmap = QtGui.QPixmap(subject_list[i]["image"])
+            pixmap.setDevicePixelRatio(8)
+            label_pix = QLabel()
+            label_pix.setStyleSheet("border:none")
+            label_pix.setPixmap(pixmap)
+            label_pix.setMaximumSize(120, 120)
+            label_title = QLabel(subject_list[i]["name"])
+            label_title.setWordWrap(True)
+            label_title.setStyleSheet("border:none; font-size: 20pt; letter-spacing:3px;"
+                                      "color:#e0562f; font-weight:bold")
+            label_title.setAlignment(QtCore.Qt.AlignCenter)
+            label_title.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+            f_hbox.addWidget(label_pix)
+            f_hbox.addWidget(label_title)
+            f_vbox.addLayout(f_hbox)
+            label_prof = QLabel("Professor: {}".format(subject_list[i]["professor"]))
+            label_prof.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+            label_prof.setStyleSheet("border:none; border-radius: 0; border-top:1px solid #4589ff;")
+            f_vbox.addWidget(label_prof)
+            label_section = QLabel("Section: {:03}".format(subject_list[i]["section"]))
+            label_section.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+            label_section.setStyleSheet("border:none")
+            f_vbox.addWidget(label_section)
+            label_desc = QLabel(subject_list[i]["description"])
+            label_desc.setWordWrap(True)
+            label_desc.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+            label_desc.setStyleSheet("border:none")
+            f_vbox.addWidget(label_desc)
+            push_btn = QPushButton("Go to the course".upper())
+            push_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+            push_btn.setStyleSheet("border:none; border-radius: 3px; padding: 8px; background: blue;"
+                                   "color:white")
+            self.btn_group.addButton(push_btn, subject_list[i]["id"])
+            f_vbox.addWidget(push_btn, alignment=QtCore.Qt.AlignCenter)
+            f_vspacer = QSpacerItem(20, 40, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+            f_vbox.addSpacerItem(f_vspacer)
+            grid.addWidget(frame, row, col)
+            if col == 1:
+                col = 0
+                row += 1
+            else:
+                col += 1
 
         self.stacked_widget.insertWidget(len(self.subject_list), page)
