@@ -9,8 +9,9 @@ import time
 import WindowLoader
 
 class FaceRecognitionWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, username):
         super().__init__()        # setting geometry
+        self.username = username
         self.window_loader = WindowLoader.WindowManager.get_instance()
         self.desktop = QApplication.desktop()
         self.screenRect = self.desktop.screenGeometry()

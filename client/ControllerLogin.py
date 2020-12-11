@@ -4,12 +4,11 @@ from PyQt5 import uic, QtCore, QtGui
 import BrainOfFront
 
 import WindowLoader
-import sys
 
 class ControllerLoginWindow(QDialog):
     def __init__(self):
+        super().__init__()
         self.window_loader = WindowLoader.WindowManager.get_instance()
-        super(ControllerLoginWindow, self).__init__()
         uic.loadUi("LoginWindow.ui", self)
         self.width = 800
         self.height = 500
@@ -36,24 +35,6 @@ class ControllerLoginWindow(QDialog):
     def on_submit(self):
         username = self.username_field.text()
         password = self.password_field.text()
-        auth = self.authenticate(username, password)
-        # sample auth object
-        # auth = {
-        #     "valid": False,
-        #     "username_err": "Shouldn't be blank",
-        #     "password_err": ""
-        # }
-        # if True:    #  if auth["valid"]:
-        #     self.close()
-        #     self.window_loader.load_camera_window()
-        # else:
-        #     self.fdbck_uname_label.setText(auth["username_err"])
-        #     self.fdbck_passw_label.setText(auth["password_err"])
-
-    # Authentication goes here
-    def authenticate(self, username, password):
-        auth = {}
-        valid = False
         username_err = ""
         password_err = ""
         if not username or not password:
@@ -61,16 +42,30 @@ class ControllerLoginWindow(QDialog):
                 username_err = "This field is required"
             if not password:
                 password_err = "This field is required"
+            self.fdbck_uname_label.setText(username_err)
+            self.fdbck_passw_label.setText(password_err)
+            return
         else:
-            BrainOfFront.SendData(username + " " + password)
-            retValue = BrainOfFront.ReadData()#<--Use this for front logic
-            print(retValue)
-            #Kamronbek Rustamov your work goes  somewhere else
-            pass
-        if not valid:
-            auth = {
-                "valid": valid,
-                "username_err": username_err,
-                "password_err": password_err
-            }
-        return auth
+            auth = self.authenticate(username, password)
+            if str(auth).lower() == "yes":
+                self.window_loader.load_camera_window(username)
+                self.close()
+            else:
+                self.show_error_msg("Wrong Credentials!")
+                self.username_field.setText("")
+                self.password_field.setText("")
+                return
+
+    # Authentication goes here
+    def authenticate(self, username, password):
+        BrainOfFront.SendData(username + " " + password)
+        retValue = BrainOfFront.ReadData()#<--Use this for front logic
+        #Kamronbek Rustamov your work goes  somewhere else
+        return retValue
+
+    def show_error_msg(self, msg):
+        msgbox = QMessageBox(self)
+        msgbox.setIcon(QMessageBox.Warning)
+        msgbox.setText(msg)
+        msgbox.setStandardButtons(QMessageBox.Ok)
+        retval = msgbox.exec_()

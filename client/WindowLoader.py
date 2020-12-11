@@ -21,15 +21,14 @@ class WindowManager:
             raise Exception("This class is a Singleton")
         else:
             WindowManager.__instance = self
-        self.app = QApplication(sys.argv)
+            self.app = QApplication(sys.argv)
 
     def load_login_window(self):
         window_1 = ControllerLoginWindow()
-        sys.exit(self.app.exec_())
 
-    def load_camera_window(self):
-        window_2 = FaceRecognitionWindow()
+    def load_camera_window(self, username):
+        window_2 = FaceRecognitionWindow(username)
 
     def load_dashboard_window(self):
-        window_1 = DashboardWindow("Tukhtamurod", "Isroilov")
+        window_1 = DashboardWindow("Tukhtamurod", "Isroilov", "U1810171")
         sys.exit(self.app.exec_())
