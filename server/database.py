@@ -28,7 +28,6 @@ def get_user_by_id(connection, user_id):
 
 
 def get_user_by_id_password(connection, user_id, password):
-    connection = connect()
     return connection.execute(GET_USER_BY_ID_PASSWORD, (user_id, password),).fetchall()
 
 
