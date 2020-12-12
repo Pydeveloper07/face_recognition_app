@@ -1,9 +1,12 @@
 import ctypes
 import pathlib
 import ctypes.util
+import database as db
 import time
 
-#getting absolut path   
+db_connection = db.connect()
+db.create_tables(db_connection)
+#getting absolut path
 libname = pathlib.Path().absolute() / "libmy.so"
 #loading shared library
 c_lib = ctypes.cdll.LoadLibrary(libname)
@@ -19,10 +22,8 @@ libc.free.argtypes = (ctypes.c_void_p,)
 #Running Main()
 c_lib.main()
 
-#Simulating DATABASE
-DictOfPass = {'admin': 'admin',
-	'Javokhir': 'admin',
-	'Tukhtamurod': 'forker'}
+#Seeding DATABASE
+db.seed_users(db_connection)
 
 c_lib.NewProcess()
 while True:
@@ -35,13 +36,18 @@ while True:
 	returnValue = Value.strip()
 	print("Client:", Value)
 	#getting the returned value and checkingfrom DictOfPass then responding respectively
-	returnS = returnValue.split()		
-	if (returnS[0] in DictOfPass.keys()) and (DictOfPass[returnS[0]] == returnS[1]):
-		isPass = True
-		retvalue = "Yes"
+	returnS = returnValue.split()
+
+	if len(returnS) == 2:
+		user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
+		if len(user) > 0:
+			isPass = True
+			retvalue = "Yes"
+		else:
+			retvalue = "No"
 	else:
 		retvalue = "No"
-	
+
 	#Running SendDatShit()
 	c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
 	if isPass:
