@@ -26,8 +26,9 @@ c_lib.main()
 db.seed_users(db_connection)
 
 c_lib.NewProcess()
+isClientOff = False
 while True:
-	isPass=False
+	isPass = False
 	#Running ReadDatShit()
 	
 	_result = c_lib.ReadDatShit()
@@ -45,10 +46,14 @@ while True:
 			retvalue = "Yes"
 		else:
 			retvalue = "No"
+	elif len(returnS) == 0:
+		isClientOff = True
 	else:
 		retvalue = "No"
 
 	#Running SendDatShit()
+	if isClientOff:
+		break
 	c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
 	if isPass:
 		break
