@@ -4,6 +4,7 @@ from Dashboard import DashboardWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 import threading
+import BrainOfFront
 
 class WindowManager:
     __instance = None
@@ -34,4 +35,4 @@ class WindowManager:
 
     def load_dashboard_window(self):
         window_1 = DashboardWindow("Tukhtamurod", "Isroilov", "U1810171")
-        sys.exit(self.app.exec_())
+#  sys.exit(self.app.exec_())

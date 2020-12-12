@@ -69,3 +69,7 @@ class ControllerLoginWindow(QDialog):
         msgbox.setText(msg)
         msgbox.setStandardButtons(QMessageBox.Ok)
         retval = msgbox.exec_()
+
+    def closeEvent(self, event):
+        BrainOfFront.CloseAll()
+        event.accept()
