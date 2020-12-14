@@ -16,6 +16,37 @@ pid_t childpid;
 struct sockaddr_in serv_addr, cli_addr;
 socklen_t clilen;
 
+void ReceiveFile()
+{
+	FILE *fp;
+	int bytesReceived = 0;
+	char recvBuff[1024];
+	char fname[100];
+	read(newsockfd, fname, 256);
+	//strcat(fname,"AK");
+	printf("File Name: %s\n",fname);
+	printf("Receiving file...");
+   	fp = fopen(fname, "ab");
+    	if(NULL == fp)
+    	{
+       	 printf("Error opening file");
+    	}
+
+	long double sz=1;
+    /* Receive data in chunks of 256 bytes */
+    	while((bytesReceived = read(newsockfd, recvBuff, 1024)) > 0)
+   	 {
+   	     sz++;
+             fwrite(recvBuff, 1,bytesReceived,fp);
+         }
+
+        if(bytesReceived < 0)
+         {
+         	printf("\n Read Error \n");
+         }
+        printf("\nCompleted.\n");
+}
+
 char* ReadDatShit()
 {
 	int size = 100;

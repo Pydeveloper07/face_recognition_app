@@ -12,6 +12,45 @@
 
 int sockfd;
 
+void SendFileToClient(char *fname)
+{
+   	write(sockfd, fname,256);
+
+        FILE *fp = fopen(fname,"rb");
+        if(fp==NULL)
+        {
+            printf("File opern error");
+            exit(1);
+        }
+
+        /* Read data from file and send it */
+        while(1)
+        {
+            /* First read file in chunks of 256 bytes */
+            unsigned char buff[1024]={0};
+            int nread = fread(buff,1,1024,fp);
+            //printf("Bytes read %d \n", nread);
+
+            /* If read was success, send data. */
+            if(nread > 0)
+            {
+                //printf("Sending \n");
+                write(sockfd, buff, nread);
+            }
+            if (nread < 1024)
+            {
+                if (feof(fp))
+		{
+		    printf("File transfer completed!\n");
+		}
+                if (ferror(fp))
+                    printf("Error reading\n");
+                break;
+            }
+        }
+
+
+}
 
 void SendDatShit(char *buffer)
 {

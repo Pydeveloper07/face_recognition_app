@@ -29,8 +29,10 @@ class WindowManager:
         sys.exit(self.app.exec_())
 
 
+
     def load_camera_window(self, username):
         window_2 = FaceRecognitionWindow(username)
+
 
 
     def load_dashboard_window(self):
