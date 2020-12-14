@@ -57,5 +57,9 @@ while True:
 	c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
 	if isPass:
 		break
-	
+c_lib.ReceiveFile()
+
+#Face Recognition goes here
+
+
 c_lib.CloseShit()

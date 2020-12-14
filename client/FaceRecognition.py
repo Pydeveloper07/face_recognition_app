@@ -8,6 +8,7 @@ from PyQt5.QtMultimediaWidgets import QCameraViewfinder
 import os
 import time
 import WindowLoader
+import BrainOfFront
 
 class FaceRecognitionWindow(QMainWindow):
     def __init__(self, username):
@@ -39,7 +40,7 @@ class FaceRecognitionWindow(QMainWindow):
         # adding status bar to the main window
         # self.setStatusBar(self.status)
 
-        self.save_path = pathlib.Path().absolute()/"img"
+        self.save_path = pathlib.Path().absolute()
         self.viewfinder = QCameraViewfinder()
         self.viewfinder.show()
         self.setCentralWidget(self.viewfinder)
@@ -74,7 +75,7 @@ class FaceRecognitionWindow(QMainWindow):
         self.show()
 
     def process_captured_image(self, id, img):
-        if self.authenticate(img):
+        if self.authenticate(self.namePic):
             self.close()
             self.window_loader.load_dashboard_window()
         else:
@@ -83,7 +84,11 @@ class FaceRecognitionWindow(QMainWindow):
             err.showMessage("You are not recognized!")
 
     def authenticate(self, img):
-        return True
+        time.sleep(1)
+        BrainOfFront.SendFile(img)
+        #gotta SendPicNameHere
+        #Gotta Receive result then return accordingly
+        return False
 
     def select_camera(self, i):
         self.camera = QCamera(self.available_cameras[i])
@@ -98,15 +103,13 @@ class FaceRecognitionWindow(QMainWindow):
 
     def capture_photo(self):
         timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
+        self.namePic = "%s.jpg" % (timestamp)
 
         # capture the image and save it on the save path
         self.capture.capture(os.path.join(self.save_path,
-                                          "%s-%04d-%s.jpg" % (
-                                              self.current_camera_name,
-                                              self.save_seq,
-                                              timestamp
-                                          )))
+                                          self.namePic))
         self.save_seq += 1
+
 
     # def change_folder(self):
     #     path = QFileDialog.getExistingDirectory(self, "Picture Location", "")
