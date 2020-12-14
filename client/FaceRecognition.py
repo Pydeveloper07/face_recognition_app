@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStatusBar, QToolBar, \
     QAction, QComboBox, QFileDialog, QErrorMessage, QMessageBox
 
+import pathlib
 from PyQt5 import QtGui
 from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
 from PyQt5.QtMultimediaWidgets import QCameraViewfinder
@@ -38,7 +39,7 @@ class FaceRecognitionWindow(QMainWindow):
         # adding status bar to the main window
         # self.setStatusBar(self.status)
 
-        self.save_path = ""
+        self.save_path = pathlib.Path().absolute()/"img"
         self.viewfinder = QCameraViewfinder()
         self.viewfinder.show()
         self.setCentralWidget(self.viewfinder)
