@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 import sys
 import threading
 import BrainOfFront
+import camera
 
 class WindowManager:
     __instance = None
@@ -31,8 +32,8 @@ class WindowManager:
 
 
     def load_camera_window(self, username):
-        window_2 = FaceRecognitionWindow(username)
-
+        # window_2 = FaceRecognitionWindow(username)
+        return camera.takePhoto()
 
 
     def load_dashboard_window(self, name,surname, id):

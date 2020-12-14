@@ -48,7 +48,12 @@ class ControllerLoginWindow(QDialog):
         else:
             auth = self.authenticate(username, password)
             if str(auth).lower() == "yes":
-                self.window_loader.load_camera_window(username)
+                photo = self.window_loader.load_camera_window(username) # returning tuple
+                # indicating whether photo is taken succesfuly
+                if not photo[0]:
+                    self.show_error_msg(photo[1]) # if there is a problem with taking photo showing in it error
+                else:
+                    pass # dealing with photo goes here photo_name = photo[1]
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
