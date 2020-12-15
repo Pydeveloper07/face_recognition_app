@@ -22,7 +22,9 @@ void ReceiveFile()
 	int bytesReceived = 0;
 	char recvBuff[1024];
 	char fname[100];
+	int received_int = 0;
 	read(newsockfd, fname, 256);
+	read(newsockfd, &received_int, sizeof(received_int));
 	//strcat(fname,"AK");
 	printf("File Name: %s\n",fname);
 	printf("Receiving file...");
@@ -34,10 +36,22 @@ void ReceiveFile()
 
 	long double sz=1;
     /* Receive data in chunks of 256 bytes */
-    	while((bytesReceived = read(newsockfd, recvBuff, 1024)) > 0)
-   	 {
-   	     sz++;
-             fwrite(recvBuff, 1,bytesReceived,fp);
+
+    int allbytes = 0;
+    int k = 0;
+
+    	while(1)
+    	{
+    	    bytesReceived = read(newsockfd, recvBuff, 1024);
+   	        allbytes+=bytesReceived;
+   	        if (allbytes==ntohl(received_int))
+   	        {
+   	     	    break;
+   	        }
+
+   	        sz++;
+
+            fwrite(recvBuff, 1,bytesReceived,fp);
          }
 
         if(bytesReceived < 0)
@@ -45,6 +59,7 @@ void ReceiveFile()
          	printf("\n Read Error \n");
          }
         printf("\nCompleted.\n");
+        fclose(fp);
 }
 
 char* ReadDatShit()

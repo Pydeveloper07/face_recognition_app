@@ -61,5 +61,8 @@ c_lib.ReceiveFile()
 
 #Face Recognition goes here
 
+resFaceVar = "yes"
+
+c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
 
 c_lib.CloseShit()
