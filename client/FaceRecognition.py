@@ -25,14 +25,8 @@ class FaceRecognitionWindow(QMainWindow):
         self.setStyleSheet("background : lightgrey;")
         self.available_cameras = QCameraInfo.availableCameras()
         if not self.available_cameras:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Camera not found!")
-            msg.setInformativeText("You don't have any available webcam! Please connect one and try again!")
-            msg.setStandardButtons(QMessageBox.Close)
-            retval = msg.exec_()
-            self.close()
-            self.window_loader.load_login_window()
+            self.show_error("Camera not found!",
+                            "You don't have any available webcam! Please connect one and try again!")
 
         self.status = QStatusBar()
         self.status.setStyleSheet("background : white;")
@@ -81,15 +75,17 @@ class FaceRecognitionWindow(QMainWindow):
             self.close()
             self.window_loader.load_dashboard_window(self.username, self.username, self.username)
         else:
-            err = QErrorMessage(self)
-            err.setWindowTitle("Error")
-            err.showMessage("You are not recognized!")
+            # err = QErrorMessage(self)
+            # err.setWindowTitle("Error")
+            # err.showMessage("You are not recognized!")
+            self.show_error("Authentication Error", f"You are not a student with ID {self.username}. Get the fuck out of here")
 
     def authenticate(self, img):
         time.sleep(1)
         BrainOfFront.SendFile(img)
         ResultFaceRec = BrainOfFront.ReadData()
         return ResultFaceRec
+      
 
     def select_camera(self, i):
         self.camera = QCamera(self.available_cameras[i])
@@ -111,6 +107,15 @@ class FaceRecognitionWindow(QMainWindow):
                                           self.namePic))
         self.save_seq += 1
 
+    def show_error(self, text, informative_text):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText(text)
+        msg.setInformativeText(informative_text)
+        msg.setStandardButtons(QMessageBox.Close)
+        retval = msg.exec_()
+        self.close()
+        self.window_loader.load_login_window()
 
     # def change_folder(self):
     #     path = QFileDialog.getExistingDirectory(self, "Picture Location", "")
