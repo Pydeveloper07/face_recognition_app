@@ -12,9 +12,29 @@
 
 int sockfd;
 
+
+int fsize(char* file) {
+  int size;
+  FILE* fh;
+
+  fh = fopen(file, "rb"); //binary mode
+  if(fh != NULL){
+    if( fseek(fh, 0, SEEK_END) ){
+      fclose(fh);
+      return -1;
+    }
+
+    size = ftell(fh);
+    fclose(fh);
+    return size;
+  }
+
+  return -1; //error
+}
+
 void SendFileToClient(char *fname)
 {
-   	write(sockfd, fname,256);
+    	write(sockfd, fname,256);
 
         FILE *fp = fopen(fname,"rb");
         if(fp==NULL)
@@ -22,6 +42,10 @@ void SendFileToClient(char *fname)
             printf("File opern error");
             exit(1);
         }
+        //sending file size
+        int sizeoFile=fsize(fname);
+        int converted_number = htonl(sizeoFile);
+        write(sockfd, &converted_number, sizeof(converted_number));
 
         /* Read data from file and send it */
         while(1)
@@ -48,6 +72,7 @@ void SendFileToClient(char *fname)
                 break;
             }
         }
+        fclose(fp);
 
 
 }

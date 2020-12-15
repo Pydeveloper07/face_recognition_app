@@ -1,7 +1,10 @@
+import pathlib
 lorem_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt " \
              "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " \
              "laboris nisi ut aliquip ex ea commodo consequat."
-video_file = "/home/blacktiger/PycharmProjects/face_recognition_app/client/media/sample_video.mkv"
+video_file ='{}'.format(pathlib.Path().absolute()/"media/sample_video.mkv")
+
+
 
 subject_list = [
     {

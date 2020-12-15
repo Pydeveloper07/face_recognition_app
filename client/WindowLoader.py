@@ -35,6 +35,6 @@ class WindowManager:
 
 
 
-    def load_dashboard_window(self):
-        window_1 = DashboardWindow("Tukhtamurod", "Isroilov", "U1810171")
+    def load_dashboard_window(self, name,surname, id):
+        window_1 = DashboardWindow(name, surname, id)
 #  sys.exit(self.app.exec_())

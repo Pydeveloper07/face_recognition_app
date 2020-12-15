@@ -69,9 +69,11 @@ class FaceRecognitionWindow(QMainWindow):
         self.show()
 
     def process_captured_image(self, id, img):
-        if self.authenticate(self.namePic):
+        auth = self.authenticate(self.namePic)
+        print("Result of face Recognition "+auth)
+        if str(auth).lower() == "yes":
             self.close()
-            self.window_loader.load_dashboard_window()
+            self.window_loader.load_dashboard_window(self.username, self.username, self.username)
         else:
             # err = QErrorMessage(self)
             # err.setWindowTitle("Error")
@@ -81,12 +83,9 @@ class FaceRecognitionWindow(QMainWindow):
     def authenticate(self, img):
         time.sleep(1)
         BrainOfFront.SendFile(img)
-        # The username must be received after sending photo
-        username = BrainOfFront.ReadData()
-        if username == self.username:
-            return True
-        else:
-            return False
+        ResultFaceRec = BrainOfFront.ReadData()
+        return ResultFaceRec
+      
 
     def select_camera(self, i):
         self.camera = QCamera(self.available_cameras[i])
@@ -127,3 +126,7 @@ class FaceRecognitionWindow(QMainWindow):
     def alert(self, msg):
         error = QErrorMessage(self)
         error.showMessage(msg)
+
+    # def closeEvent(self, event):
+    #      BrainOfFront.CloseAll()
+    #      event.accept()
