@@ -1,11 +1,11 @@
-from ControllerLogin import ControllerLoginWindow
-from FaceRecognition import FaceRecognitionWindow
-from Dashboard import DashboardWindow
-from PyQt5.QtWidgets import QApplication
 import sys
 import threading
-import BrainOfFront
+
+from PyQt5.QtWidgets import QApplication
+
 import camera
+from ControllerLogin import ControllerLoginWindow
+from Dashboard import DashboardWindow
 
 
 class WindowManager:
