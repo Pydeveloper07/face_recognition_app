@@ -12,7 +12,6 @@
 
 int sockfd;
 
-
 int fsize(char *file) {
   int size;
   FILE* fh;
