@@ -3,7 +3,6 @@ import pathlib
 import ctypes.util
 import database as db
 import time
-import json
 
 db_connection = db.connect()
 db.create_tables(db_connection)
@@ -33,28 +32,24 @@ while True:
     # Running ReadDatShit()
 
     _result = c_lib.ReadDatShit()
-
-    value = ctypes.c_char_p(_result).value.decode()
-    value = json.loads(value)
-
+    Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
     libc.free(_result)
+    returnValue = Value.strip()
+    print("Client:", Value)
+    # getting the returned value and checkingfrom DictOfPass then responding respectively
+    returnS = returnValue.split()
 
-    print("Client:", value)
-    # getting the returned value and checking from DictOfPass then responding respectively
-
-    # if len(returnS) == 2:
-    #     user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
-    #     if len(user) > 0:
-    #         isPass = True
-    #         retvalue = "Yes"
-    #     else:
-    #         retvalue = "No"
-    # elif len(returnS) == 0:
-    #     isClientOff = True
-    # else:
-    #     retvalue = "No"
-
-    retvalue = 'yes'
+    if len(returnS) == 2:
+        user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
+        if len(user) > 0:
+            isPass = True
+            retvalue = "Yes"
+        else:
+            retvalue = "No"
+    elif len(returnS) == 0:
+        isClientOff = True
+    else:
+        retvalue = "No"
 
     # Running SendDatShit()
     if isClientOff:
@@ -62,7 +57,6 @@ while True:
     c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
     if isPass:
         break
-    break
 c_lib.ReceiveFile()
 
 # Face Recognition goes here
