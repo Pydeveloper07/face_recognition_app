@@ -13,7 +13,7 @@
 int sockfd;
 
 
-int fsize(char* file) {
+int fsize(char *file) {
   int size;
   FILE* fh;
 
@@ -39,7 +39,7 @@ void SendFileToClient(char *fname)
         FILE *fp = fopen(fname,"rb");
         if(fp==NULL)
         {
-            printf("File opern error");
+            printf("File open error");
             exit(1);
         }
         //sending file size

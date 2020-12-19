@@ -1,6 +1,6 @@
 import ctypes
-import pathlib
 import ctypes.util
+import pathlib
 
 # getting absolut path
 libname = pathlib.Path().absolute() / "SocketPrograms/libmy.so"
@@ -12,7 +12,7 @@ libc = ctypes.CDLL(ctypes.util.find_library('c'))
 # Setting args and return types
 c_lib.ReadDatShit.restype = ctypes.c_void_p
 c_lib.SendDatShit.argtypes = [ctypes.POINTER(ctypes.c_char), ]
-c_lib.SendFileToClient.argtypes = [ctypes.POINTER(ctypes.c_char), ]
+c_lib.SendFileToClient.argtypes = [ctypes.POINTER(ctypes.c_void_p), ]
 libc.free.argtypes = (ctypes.c_void_p,)
 
 
@@ -29,6 +29,7 @@ def ReadData():
     value = ctypes.c_char_p(_result).value.decode('ISO-8859–1')
     libc.free(_result)
     return value
+
 
 def SendFile(input):
     c_lib.SendFileToClient(input.encode('ISO-8859–1'))
