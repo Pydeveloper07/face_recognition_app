@@ -1,27 +1,29 @@
-from BrainOfFront import SendFile, SendData, ReadData
 import json
+from BrainOfFront import ReadData, SendData
 
 
 def send_request(action: str):
     def inner(*args):
         req = {'action': action, 'username': args[0]}
 
-        if action == 'check_credentials':
-            req['password'] = args[1]
-        elif action == 'set_time_spent':
-            req['time_spent'] = args[1]
+        if action == 'set_start_time':
+            req['start_time'] = args[1]
+        elif action == 'set_end_time':
+            req['end_time'] = args[1]
 
-        print(json.dumps(req))
         SendData(json.dumps(req))
         return ReadData()
 
     return inner
 
 
-def check_photo(photo):
-    SendFile(photo)
+# send_credentials = send_request('send_credentials')
+# send_photo = send_request('send_photo')
 
-
-check_credentials = send_request('check_credentials')
+send_start_time = send_request('send_start_time')
+send_end_time = send_request('send_end_time')
 logout = send_request('logout')
-set_time_spent = send_request('set_time_spent')
+
+
+if __name__ == '__main__':
+    pass
