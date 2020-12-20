@@ -1,5 +1,3 @@
-import time
-
 from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, \
@@ -7,13 +5,24 @@ from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHB
 
 import WindowLoader
 import util_funcs
+import sys
 from MediaPlayer import MediaPlayer
+
 from models import subject_list
+
+
+# subject_list = []
 
 
 class DashboardWindow(QWidget):
     def __init__(self, first_name="", last_name="", username=""):
         super().__init__()
+        # uncomment when database is created
+        # global subject_list
+        # resp = util_funcs.get_subject_list(username)
+        # if resp['status'] == 'ok':
+        #     subject_list = resp['subjects']
+
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -30,8 +39,7 @@ class DashboardWindow(QWidget):
         self.init_home()
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
-        self.starting_time = 0
-        self.closing_time = 0
+        self.current_subject_id = -1
 
     def init_subject_list(self):
         for subject in subject_list:
@@ -106,16 +114,15 @@ class DashboardWindow(QWidget):
     def close_subject_frame(self):
 
         subject_id = self.stacked_widget.currentIndex()
-        self.closing_time = time.time()
         username = self.username
         widget = self.stacked_widget.currentWidget()
         player = widget.findChild(MediaPlayer, 'player')
         player.stop()
 
         # Use above variables to set how much time user spent for this subject
-        time_spent = self.closing_time - self.starting_time
-        util_funcs.set_time_spent(username, time_spent)
+        util_funcs.exit_course(username, subject_id)
 
+        self.current_subject_id = -1
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
     def init_home(self):
@@ -186,9 +193,10 @@ class DashboardWindow(QWidget):
         self.stacked_widget.insertWidget(len(self.subject_list), page)
 
     def init_page(self, id):
-        subject_id = id
         username = self.username
-        self.starting_time = time.time()  # This will return current time in seconds passed since epoch
+        self.current_subject_id = id
+        resp = util_funcs.enter_course(username, id)
+
         # Mark the starting time of the course
         #
         #
@@ -203,6 +211,5 @@ class DashboardWindow(QWidget):
     def log_out(self):
         username = self.username
         self.window_loader.load_login_window()
-        self.close()
-
-        util_funcs.logout(username)
+        util_funcs.logout(username, self.current_subject_id)
+        sys.exit(0)
