@@ -2,7 +2,7 @@ import ctypes
 import pathlib
 import ctypes.util
 import database as db
-import time
+from handle_dashboard import handle_request
 
 db_connection = db.connect()
 db.create_tables(db_connection)
@@ -19,12 +19,6 @@ c_lib.SendDatShit.argtypes = [ctypes.POINTER(ctypes.c_char), ]
 c_lib.Forker.restype = ctypes.c_int
 libc.free.argtypes = (ctypes.c_void_p,)
 
-# Running Main()
-c_lib.main()
-
-# Seeding DATABASE
-db.seed_users(db_connection)
-
 c_lib.NewProcess()
 isClientOff = False
 while True:
@@ -34,6 +28,10 @@ while True:
     _result = c_lib.ReadDatShit()
     Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
     libc.free(_result)
+
+    if 'action' in Value:
+        handle_request(db_connection, Value)
+
     returnValue = Value.strip()
     print("Client:", Value)
     # getting the returned value and checkingfrom DictOfPass then responding respectively
