@@ -2,7 +2,10 @@ import ctypes
 import pathlib
 import ctypes.util
 import database as db
-from handle_dashboard import handle_request
+from request_handler import handle_request
+import json
+from client.models import subject_list
+import sys
 
 db_connection = db.connect()
 db.create_tables(db_connection)
@@ -19,6 +22,12 @@ c_lib.SendDatShit.argtypes = [ctypes.POINTER(ctypes.c_char), ]
 c_lib.Forker.restype = ctypes.c_int
 libc.free.argtypes = (ctypes.c_void_p,)
 
+# Running Main()
+c_lib.main()
+
+# Seeding DATABASE
+db.seed_users(db_connection)
+
 c_lib.NewProcess()
 isClientOff = False
 while True:
@@ -29,38 +38,44 @@ while True:
     Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
     libc.free(_result)
 
-    if 'action' in Value:
-        handle_request(db_connection, Value)
+    retvalue = handle_request(db_connection, Value)
+    c_lib.SendDatShit(retvalue.encode())
 
-    returnValue = Value.strip()
-    print("Client:", Value)
-    # getting the returned value and checkingfrom DictOfPass then responding respectively
-    returnS = returnValue.split()
+    # if 'action' in Value:
+    #     retvalue = handle_request(db_connection, Value)
+    #     c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
+    #     continue
+    #
+    # returnValue = Value.strip()
+    # print("Client:", Value)
+    # # getting the returned value and checkingfrom DictOfPass then responding respectively
+    # returnS = returnValue.split()
+    #
+    # if len(returnS) == 2:
+    #     user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
+    #     if len(user) > 0:
+    #         isPass = True
+    #         retvalue = "Yes"
+    #     else:
+    #         retvalue = "No"
+    # elif len(returnS) == 0:
+    #     isClientOff = True
+    # else:
+    #     retvalue = "No"
+    #
+    # # Running SendDatShit()
+    # if isClientOff:
+    #     break
+    # c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
+    # if isPass:
+    #     break
 
-    if len(returnS) == 2:
-        user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
-        if len(user) > 0:
-            isPass = True
-            retvalue = "Yes"
-        else:
-            retvalue = "No"
-    elif len(returnS) == 0:
-        isClientOff = True
-    else:
-        retvalue = "No"
-
-    # Running SendDatShit()
-    if isClientOff:
-        break
-    c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
-    if isPass:
-        break
-c_lib.ReceiveFile()
+# c_lib.ReceiveFile()
 
 # Face Recognition goes here
 
-resFaceVar = "yes"
-
-c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
+# resFaceVar = "yes"
+#
+# c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
 
 c_lib.CloseShit()
