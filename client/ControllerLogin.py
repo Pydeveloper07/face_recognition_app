@@ -1,7 +1,7 @@
+import BrainOfFront
 from PyQt5.QtWidgets import QApplication, \
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QMessageBox
 from PyQt5 import uic, QtCore, QtGui
-from util_funcs import check_credentials
 
 import WindowLoader
 
@@ -48,16 +48,8 @@ class ControllerLoginWindow(QDialog):
             return
         else:
             auth = self.authenticate(username, password)
-            if auth:
-                self.window_loader.load_dashboard_window('A', 'B', 'C')
             if str(auth).lower() == "yes":
-                photo = self.window_loader.load_camera_window(username)  # returning tuple
-                # indicating whether photo is taken successfully
-                if not photo[0]:
-                    self.show_error_msg(photo[1])  # if there is a problem with taking photo showing in it error
-                else:
-                    # dealing with photo goes here photo_name = photo[1]
-                    pass
+                self.window_loader.load_camera_window(username)
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
@@ -67,10 +59,10 @@ class ControllerLoginWindow(QDialog):
 
     # Authentication goes here
     def authenticate(self, username, password):
-        # sends request to server
-        result = check_credentials(username, password)
-
-        return result
+        BrainOfFront.SendData(username + " " + password)
+        retValue = BrainOfFront.ReadData()  # <--Use this for front logic
+        # Kamronbek Rustamov your work goes  somewhere else
+        return retValue
 
     def show_error_msg(self, msg):
         msgbox = QMessageBox(self)
