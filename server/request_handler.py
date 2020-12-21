@@ -1,11 +1,17 @@
-import json, pickle
+import json
+import datetime
 import database as db
 from client.models import subject_list
 
+isOff = False
 user = {
     'user_id': 'u1810184',
     'password': '19990111'
 }
+
+
+def is_stop():
+    return isOff
 
 
 def login_handler(connection, req):
@@ -25,6 +31,9 @@ def login_handler(connection, req):
 def logout_handler(connection, req):
     # need to make request to database
     print(req)
+
+    global isOff
+    isOff = True
     return {'status': 'ok'}
 
 
@@ -40,12 +49,18 @@ def get_subjects_handler(connection, req):
 def enter_course_handler(connection, req):
     # need to make request to database
     print(req)
+    cur_time = datetime.datetime.now()
+    print(f'User entered course {req["course_id"]} at {cur_time} ')
+
     return {'status': 'ok'}
 
 
 def exit_course_handler(connection, req):
     # need to make request to database
     print(req)
+    cur_time = datetime.datetime.now()
+    print(f'User left course {req["course_id"]} at {cur_time} ')
+
     return {'status': 'ok'}
 
 
@@ -59,6 +74,8 @@ handler_dict = {
 
 
 def handle_request(connection, req):
+    if len(req) == 0:
+        return None
     req = json.loads(req)
     handler = req.get('action')
     if handler is None or handler not in handler_dict:
