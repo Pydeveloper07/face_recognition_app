@@ -2,9 +2,7 @@ import ctypes
 import pathlib
 import ctypes.util
 import database as db
-from request_handler import handle_request
-import json
-from client.models import subject_list
+from request_handler import handle_request, is_stop
 import sys
 
 db_connection = db.connect()
@@ -30,52 +28,61 @@ db.seed_users(db_connection)
 
 c_lib.NewProcess()
 isClientOff = False
-while True:
-    isPass = False
-    # Running ReadDatShit()
 
-    _result = c_lib.ReadDatShit()
-    Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
-    libc.free(_result)
 
-    retvalue = handle_request(db_connection, Value)
-    c_lib.SendDatShit(retvalue.encode())
+def stop_server():
+    c_lib.CloseShit()
+    sys.exit(0)
 
-    # if 'action' in Value:
-    #     retvalue = handle_request(db_connection, Value)
-    #     c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
-    #     continue
+
+def run():
+    while True:
+        if is_stop():
+            stop_server()
+        _result = c_lib.ReadDatShit()
+        Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
+        libc.free(_result)
+        retvalue = handle_request(db_connection, Value)
+        if retvalue is not None:
+            c_lib.SendDatShit(retvalue.encode())
+
+        # if 'action' in Value:
+        #     retvalue = handle_request(db_connection, Value)
+        #     c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
+        #     continue
+        #
+        # returnValue = Value.strip()
+        # print("Client:", Value)
+        # # getting the returned value and checkingfrom DictOfPass then responding respectively
+        # returnS = returnValue.split()
+        #
+        # if len(returnS) == 2:
+        #     user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
+        #     if len(user) > 0:
+        #         isPass = True
+        #         retvalue = "Yes"
+        #     else:
+        #         retvalue = "No"
+        # elif len(returnS) == 0:
+        #     isClientOff = True
+        # else:
+        #     retvalue = "No"
+        #
+        # # Running SendDatShit()
+        # if isClientOff:
+        #     break
+        # c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
+        # if isPass:
+        #     break
+
+    # c_lib.ReceiveFile()
     #
-    # returnValue = Value.strip()
-    # print("Client:", Value)
-    # # getting the returned value and checkingfrom DictOfPass then responding respectively
-    # returnS = returnValue.split()
+    # Face Recognition goes here
     #
-    # if len(returnS) == 2:
-    #     user = db.get_user_by_id_password(db_connection, returnS[0], returnS[1])
-    #     if len(user) > 0:
-    #         isPass = True
-    #         retvalue = "Yes"
-    #     else:
-    #         retvalue = "No"
-    # elif len(returnS) == 0:
-    #     isClientOff = True
-    # else:
-    #     retvalue = "No"
+    # resFaceVar = "yes"
     #
-    # # Running SendDatShit()
-    # if isClientOff:
-    #     break
-    # c_lib.SendDatShit(retvalue.encode("ISO-8859–1"))
-    # if isPass:
-    #     break
+    # c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
 
-# c_lib.ReceiveFile()
 
-# Face Recognition goes here
-
-# resFaceVar = "yes"
-#
-# c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
-
-c_lib.CloseShit()
+if __name__ == '__main__':
+    run()
