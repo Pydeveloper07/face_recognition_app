@@ -30,6 +30,7 @@ def ReadData():
     libc.free(_result)
     return value
 
+
 def SendFile(input):
     c_lib.SendFileToClient(input.encode('ISO-8859–1'))
 
