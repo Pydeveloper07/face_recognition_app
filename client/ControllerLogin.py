@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, \
 from PyQt5 import uic, QtCore, QtGui
 
 import WindowLoader
+import util_funcs
 
 
 class ControllerLoginWindow(QDialog):
@@ -47,9 +48,14 @@ class ControllerLoginWindow(QDialog):
             self.fdbck_passw_label.setText(password_err)
             return
         else:
-            auth = self.authenticate(username, password)
-            if str(auth).lower() == "yes":
-                self.window_loader.load_camera_window(username)
+            response = self.authenticate(username, password)
+            if response.get('status') == 'ok':
+                user_type = response.get('type')
+                name = response.get('name')
+                if user_type == 0:
+                    self.window_loader.load_camera_window(username)
+                elif user_type == 1:
+                    self.window_loader.load_teacher_board_window(name)
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
@@ -59,10 +65,8 @@ class ControllerLoginWindow(QDialog):
 
     # Authentication goes here
     def authenticate(self, username, password):
-        BrainOfFront.SendData(username + " " + password)
-        retValue = BrainOfFront.ReadData()  # <--Use this for front logic
-        # Kamronbek Rustamov your work goes  somewhere else
-        return retValue
+        resp = util_funcs.login(username, password)
+        return resp
 
     def show_error_msg(self, msg):
         msgbox = QMessageBox(self)
