@@ -1,28 +1,17 @@
-from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QLabel, \
+    QPushButton, QWidget, QSpacerItem, QStackedWidget, QGridLayout, QButtonGroup, \
+    QFrame
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, \
-    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget
-
-import WindowLoader
-import util_funcs
-import sys
-from MediaPlayer import MediaPlayer
-
+from PyQt5 import QtCore, QtGui
 from models import subject_list
-
-
-# subject_list = []
-
+from MediaPlayer import MediaPlayer
+import WindowLoader
+import sys
+import time
 
 class DashboardWindow(QWidget):
-    def __init__(self, first_name="", last_name="", username=""):
+    def __init__(self, first_name="", last_name="", username = ""):
         super().__init__()
-        # uncomment when database is created
-        # global subject_list
-        # resp = util_funcs.get_subject_list(username)
-        # if resp['status'] == 'ok':
-        #     subject_list = resp['subjects']
-
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -38,8 +27,6 @@ class DashboardWindow(QWidget):
         self.init_stacked_windows()
         self.init_home()
         self.stacked_widget.setCurrentIndex(len(subject_list))
-
-        self.current_subject_id = -1
 
     def init_subject_list(self):
         for subject in subject_list:
@@ -90,7 +77,6 @@ class DashboardWindow(QWidget):
             f_label_topic.setStyleSheet("border:none; padding:5px; border-bottom: 3px solid blue;"
                                         "font-size: 16pt; color:blue; font-weight:bold; letter-spacing:10px;")
             f_video_player = MediaPlayer(subject["video"])
-            f_video_player.setObjectName('player')
             f_label_content = QLabel(subject["content"])
             f_label_content.setWordWrap(True)
             f_label_content.setAlignment(QtCore.Qt.AlignTop)
@@ -112,17 +98,13 @@ class DashboardWindow(QWidget):
             self.stacked_widget.insertWidget(subject["id"], page)
 
     def close_subject_frame(self):
-
         subject_id = self.stacked_widget.currentIndex()
+        closing_time = time.time()
         username = self.username
-        widget = self.stacked_widget.currentWidget()
-        player = widget.findChild(MediaPlayer, 'player')
-        player.stop()
-
         # Use above variables to set how much time user spent for this subject
-        util_funcs.exit_course(username, subject_id)
-
-        self.current_subject_id = -1
+        #
+        #
+        #
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
     def init_home(self):
@@ -193,10 +175,9 @@ class DashboardWindow(QWidget):
         self.stacked_widget.insertWidget(len(self.subject_list), page)
 
     def init_page(self, id):
+        subject_id = id
         username = self.username
-        self.current_subject_id = id
-        resp = util_funcs.enter_course(username, id)
-
+        starting_time = time.time() # This will return current time in seconds passed since epoch
         # Mark the starting time of the course
         #
         #
@@ -210,6 +191,5 @@ class DashboardWindow(QWidget):
 
     def log_out(self):
         username = self.username
-        self.window_loader.load_login_window()
-        util_funcs.logout(username, self.current_subject_id)
-        sys.exit(0)
+        # do server request to log out the user with "username" username
+        sys.exit()
