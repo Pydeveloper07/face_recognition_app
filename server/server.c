@@ -95,10 +95,10 @@ char* ReadDatShit()
 
 void CloseShit()
 {
-	
+
 	close(newsockfd);
 	close(sockfd);
-	
+
 
 }
 
