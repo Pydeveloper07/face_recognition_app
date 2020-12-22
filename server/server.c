@@ -35,7 +35,7 @@ void ReceiveFile()
     	}
 
 	long double sz=1;
-    /* Receive data in chunks of 256 bytes */
+    /* Receive data in chunks of 1024 bytes */
 
     int allbytes = 0;
     int k = 0;
@@ -64,14 +64,30 @@ void ReceiveFile()
 
 char* ReadDatShit()
 {
-	int size = 100;
-	char* buffer = malloc(size);
+	int buflen = 0;
 	int nn;
-	bzero(buffer, size);	
-	nn = read(newsockfd, buffer, size);
-	if(nn<0)
-		perror("Error on reading.");
-		
+
+    // get size of data
+	nn = read(newsockfd, (char *)&buflen, sizeof(buflen));
+    if(nn<0)
+		perror("Error on 1st reading.");
+
+
+    // allocate memory of size 'buflen'
+    buflen = ntohl(buflen);
+    char *buffer = malloc(buflen);
+    bzero(buffer, buflen);
+
+    //reading data from socket
+    FILE *fp = fdopen(dup(newsockfd), "r");
+    nn = fread(buffer, 1, buflen, fp);
+    fclose(fp);
+
+    //remove unnecessary part
+    buffer[buflen] = '\0';
+    if(nn<0)
+		perror("Error on 2nd reading.");
+
 	return buffer;
 
 }
@@ -79,10 +95,10 @@ char* ReadDatShit()
 
 void CloseShit()
 {
-	
+
 	close(newsockfd);
 	close(sockfd);
-	
+
 
 }
 
@@ -99,16 +115,28 @@ void NewProcess()
 	      perror("Error on Accept");
 	printf("Connection accepted from %s:%d\n", inet_ntoa(cli_addr.sin_addr),ntohs(cli_addr.sin_port));
 }
+
 void SendDatShit(char *buffer)
 {
-	int nn;
-	//bzero(buffer, sizeof(buffer));
-	
-	nn = write(newsockfd, buffer, strlen(buffer));
+
+    int nn;
+    // size of buffer in network byte order
+    int bnum = htonl(strlen(buffer));
+
+    // sending size of buffer
+    nn = write(newsockfd, (char *)&bnum, sizeof(bnum));
 	if(nn<0)
-		perror("Error on Writing!");
-		
-		
+		perror("Error on 1st Writing!");
+
+    // opening file stream. file descriptor is duplicated to safely close filestream
+	FILE *fp = fdopen(dup(newsockfd), "w");
+
+    // sending data and closing file stream
+	nn = fwrite(buffer, 1, strlen(buffer), fp);
+	fclose(fp);
+    if(nn<0)
+		perror("Error on 2nd Writing!");
+
 }
 
 
