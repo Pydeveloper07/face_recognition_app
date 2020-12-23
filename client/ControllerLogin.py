@@ -2,8 +2,11 @@ from PyQt5.QtWidgets import QApplication, \
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QMessageBox
 from PyQt5 import uic, QtCore, QtGui
 import BrainOfFront
-
+import json
 import WindowLoader
+import base64
+import pathlib
+
 
 class ControllerLoginWindow(QDialog):
     def __init__(self):
@@ -46,9 +49,11 @@ class ControllerLoginWindow(QDialog):
             self.fdbck_passw_label.setText(password_err)
             return
         else:
+            a = self.send_image()
             auth = self.authenticate(username, password)
-            if str(auth).lower() == "yes":
-                self.window_loader.load_camera_window(username)
+
+            if auth['result'] == "ok":
+                self.window_loader.load_camera_window(auth['name'])
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
@@ -58,10 +63,15 @@ class ControllerLoginWindow(QDialog):
 
     # Authentication goes here
     def authenticate(self, username, password):
-        BrainOfFront.SendData(username + " " + password)
-        retValue = BrainOfFront.ReadData()#<--Use this for front logic
-        #Kamronbek Rustamov your work goes  somewhere else
-        return retValue
+        dictInput = {'action': 'login',
+                     'username': username,
+                     'password': password}
+
+        BrainOfFront.SendData(json.dumps(dictInput))
+
+        retValue = BrainOfFront.ReadData()
+        dictOutput = json.loads(retValue)
+        return dictOutput
 
     def show_error_msg(self, msg):
         msgbox = QMessageBox(self)
@@ -69,6 +79,25 @@ class ControllerLoginWindow(QDialog):
         msgbox.setText(msg)
         msgbox.setStandardButtons(QMessageBox.Ok)
         retval = msgbox.exec_()
+
+    def send_image(self):
+        with open(pathlib.Path().absolute() / 'img/db.jpg', 'rb') as image_file:
+            image_string = str(base64.b64encode(image_file.read()))
+
+        image_string = image_string.replace("'", "")
+        if image_string[0] == 'b':
+            image_string = image_string.replace("b", "", 1)
+
+        dict_input = {'action': 'face_recognition',
+                      'student_id': 'u1810087',
+                      'photo': image_string}
+
+        BrainOfFront.SendData(json.dumps(dict_input))
+
+        ret_value = BrainOfFront.ReadData()
+        dict_output = json.loads(ret_value)
+        return dict_output
+
     #
     # def closeEvent(self, event):
     #     BrainOfFront.CloseAll()

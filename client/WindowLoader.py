@@ -4,7 +4,6 @@ from Dashboard import DashboardWindow
 from PyQt5.QtWidgets import QApplication
 import sys
 import threading
-import BrainOfFront
 
 class WindowManager:
     __instance = None

@@ -35,7 +35,7 @@ void ReceiveFile()
     	}
 
 	long double sz=1;
-    /* Receive data in chunks of 256 bytes */
+    /* Receive data in chunks of 1024 bytes */
 
     int allbytes = 0;
     int k = 0;
@@ -64,14 +64,32 @@ void ReceiveFile()
 
 char* ReadDatShit()
 {
-	int size = 100;
-	char* buffer = malloc(size);
+	int buflen = 0;
 	int nn;
-	bzero(buffer, size);	
-	nn = read(newsockfd, buffer, size);
-	if(nn<0)
-		perror("Error on reading.");
-		
+
+    // get size of data
+	nn = read(newsockfd, (char *)&buflen, sizeof(buflen));
+    if(nn<0)
+		perror("Error on 1st reading.");
+
+
+    // allocate memory of size 'buflen'
+    buflen = ntohl(buflen);
+    char *buffer = malloc(buflen);
+    bzero(buffer, buflen);
+
+    //open file stream
+    FILE *fp = fdopen(dup(newsockfd), "r");
+    nn = fread(buffer, 1, buflen, fp);
+    fclose(fp);
+
+    //remove unnecessary part
+    buffer[buflen] = '\0';
+    printf("%s\n", buffer);
+    printf("%ld\n", strlen(buffer));
+    if(nn<0)
+		perror("Error on 2nd reading.");
+
 	return buffer;
 
 }
@@ -79,10 +97,10 @@ char* ReadDatShit()
 
 void CloseShit()
 {
-	
+
 	close(newsockfd);
 	close(sockfd);
-	
+
 
 }
 
@@ -102,13 +120,17 @@ void NewProcess()
 void SendDatShit(char *buffer)
 {
 	int nn;
+	FILE *fp = fdopen(dup(newsockfd), "w");
+
+	nn = fwrite(buffer, 1, strlen(buffer), fp);
+	fclose(fp);
+
 	//bzero(buffer, sizeof(buffer));
-	
-	nn = write(newsockfd, buffer, strlen(buffer));
+	//nn = write(newsockfd, buffer, strlen(buffer));
 	if(nn<0)
 		perror("Error on Writing!");
-		
-		
+
+
 }
 
 

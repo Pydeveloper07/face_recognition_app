@@ -12,8 +12,7 @@
 
 int sockfd;
 
-
-int fsize(char* file) {
+int fsize(char *file) {
   int size;
   FILE* fh;
 
@@ -39,7 +38,7 @@ void SendFileToClient(char *fname)
         FILE *fp = fopen(fname,"rb");
         if(fp==NULL)
         {
-            printf("File opern error");
+            printf("File open error");
             exit(1);
         }
         //sending file size
@@ -80,27 +79,40 @@ void SendFileToClient(char *fname)
 void SendDatShit(char *buffer)
 {
 	int nn;
-	
+    int bnum = htonl(strlen(buffer));
 	//bzero(buffer, sizeof(buffer));
-	nn = write(sockfd, buffer, strlen(buffer));
+
+    nn = write(sockfd, (char *)&bnum, sizeof(bnum));
 	if(nn<0)
-		perror("Error on Writing!");
-		
-		
+		perror("Error on 1st Writing!");
+
+    printf("%s", buffer);
+    nn = write(sockfd, buffer, strlen(buffer));
+
+	if(nn<0)
+		perror("Error on 2nd Writing!");
+
 }
 
 char* ReadDatShit()
 {
-	int size = 100;
+	int size = 32768;
 	char* buffer = malloc(size);
 	int nn;
-	bzero(buffer, size);	
-	nn = read(sockfd, buffer, size);
-	
+	int bytes_received = 0;
+	bzero(buffer, size);
+
+//    FILE *sock_str = fdopen(dup(sockfd), "r");
+//    nn = fread(buffer, 1, size, sock_str);
+//    fclose(sock_str);
+
+    nn = read(sockfd, buffer, size);
+
 	//printf("ResClient : %s\n", buffer);
 	if(nn<0)
 		perror("Error on reading.");
-		
+
+
 	return buffer;
 
 }
@@ -116,26 +128,23 @@ void CloseShit()
 int main(int argc, char *argv[])
 {
 	int n;
-	
+
 	struct sockaddr_in serv_addr;
-	
+
 	char buffer[255];
-	
+
 	sockfd = socket(AF_INET, SOCK_STREAM,0);
 	if(sockfd < 0)
 		perror("ERROR opening socket");
-	
 
-	
+
+
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORTNO);
 	serv_addr.sin_addr.s_addr=inet_addr("127.0.0.1");
 	if(connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr))<0)
 		perror("Connection Failed");
-        
-	
-	
-	
+
 	return 0;
 }
