@@ -1,17 +1,26 @@
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QHBoxLayout, QLabel, \
-    QPushButton, QWidget, QSpacerItem, QStackedWidget, QGridLayout, QButtonGroup, \
-    QFrame
-from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
-from models import subject_list
-from MediaPlayer import MediaPlayer
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, \
+    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget
+
 import WindowLoader
-import sys
-import time
+import util_funcs
+from MediaPlayer import MediaPlayer
+from models import subject_list, video_file
+
+
+# subject_list = []
+
 
 class DashboardWindow(QWidget):
-    def __init__(self, first_name="", last_name="", username = ""):
+    def __init__(self, first_name="", last_name="", username=""):
         super().__init__()
+        # uncomment when database is created
+        # global subject_list
+        # resp = util_funcs.get_subject_list(username)
+        # if resp['status'] == 'ok':
+        #     subject_list = resp['subjects']
+
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -27,6 +36,8 @@ class DashboardWindow(QWidget):
         self.init_stacked_windows()
         self.init_home()
         self.stacked_widget.setCurrentIndex(len(subject_list))
+
+        self.current_subject_id = -1
 
     def init_subject_list(self):
         for subject in subject_list:
@@ -76,11 +87,12 @@ class DashboardWindow(QWidget):
             f_label_topic.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
             f_label_topic.setStyleSheet("border:none; padding:5px; border-bottom: 3px solid blue;"
                                         "font-size: 16pt; color:blue; font-weight:bold; letter-spacing:10px;")
-            f_video_player = MediaPlayer(subject["video"])
-            f_label_content = QLabel(subject["content"])
-            f_label_content.setWordWrap(True)
-            f_label_content.setAlignment(QtCore.Qt.AlignTop)
-            f_label_content.setStyleSheet("border:none; padding:10px 100px; font-size:12pt;")
+            f_video_player = MediaPlayer(video_file)
+            f_video_player.setObjectName('player')
+            # f_label_content = QLabel(subject["content"])
+            # f_label_content.setWordWrap(True)
+            # f_label_content.setAlignment(QtCore.Qt.AlignTop)
+            # f_label_content.setStyleSheet("border:none; padding:10px 100px; font-size:12pt;")
 
             close_btn = QPushButton("Close this subject")
             close_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
@@ -93,18 +105,22 @@ class DashboardWindow(QWidget):
             vbox.addWidget(frame)
             f_vbox.addWidget(f_label_topic, alignment=QtCore.Qt.AlignHCenter)
             f_vbox.addWidget(f_video_player, alignment=QtCore.Qt.AlignHCenter)
-            f_vbox.addWidget(f_label_content)
+            # f_vbox.addWidget(f_label_content)
             vbox.addWidget(close_btn, alignment=QtCore.Qt.AlignRight)
             self.stacked_widget.insertWidget(subject["id"], page)
 
     def close_subject_frame(self):
+
         subject_id = self.stacked_widget.currentIndex()
-        closing_time = time.time()
         username = self.username
+        widget = self.stacked_widget.currentWidget()
+        player = widget.findChild(MediaPlayer, 'player')
+        player.stop()
+
         # Use above variables to set how much time user spent for this subject
-        #
-        #
-        #
+        util_funcs.exit_course(username, subject_id)
+
+        self.current_subject_id = -1
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
     def init_home(self):
@@ -129,19 +145,19 @@ class DashboardWindow(QWidget):
             f_vbox = QVBoxLayout()
             frame.setLayout(f_vbox)
             f_hbox = QHBoxLayout()
-            pixmap = QtGui.QPixmap(subject_list[i]["image"])
-            pixmap.setDevicePixelRatio(8)
-            label_pix = QLabel()
-            label_pix.setStyleSheet("border:none")
-            label_pix.setPixmap(pixmap)
-            label_pix.setMaximumSize(120, 120)
+            # pixmap = QtGui.QPixmap(subject_list[i]["image"])
+            # pixmap.setDevicePixelRatio(8)
+            # label_pix = QLabel()
+            # label_pix.setStyleSheet("border:none")
+            # label_pix.setPixmap(pixmap)
+            # label_pix.setMaximumSize(120, 120)
             label_title = QLabel(subject_list[i]["name"])
             label_title.setWordWrap(True)
             label_title.setStyleSheet("border:none; font-size: 20pt; letter-spacing:3px;"
                                       "color:#e0562f; font-weight:bold")
             label_title.setAlignment(QtCore.Qt.AlignCenter)
             label_title.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
-            f_hbox.addWidget(label_pix)
+            # f_hbox.addWidget(label_pix)
             f_hbox.addWidget(label_title)
             f_vbox.addLayout(f_hbox)
             label_prof = QLabel("Professor: {}".format(subject_list[i]["professor"]))
@@ -175,21 +191,13 @@ class DashboardWindow(QWidget):
         self.stacked_widget.insertWidget(len(self.subject_list), page)
 
     def init_page(self, id):
-        subject_id = id
         username = self.username
-        starting_time = time.time() # This will return current time in seconds passed since epoch
-        # Mark the starting time of the course
-        #
-        #
-        #
-        # If you wanna add face recognition before going to the subject
-        # add the logic here
-        #
-        #
-        #
+        self.current_subject_id = id
+        resp = util_funcs.enter_course(username, id)
         self.stacked_widget.setCurrentIndex(id)
 
     def log_out(self):
         username = self.username
-        # do server request to log out the user with "username" username
-        sys.exit()
+        self.window_loader.load_login_window()
+        util_funcs.logout(username, self.current_subject_id)
+        self.close()
