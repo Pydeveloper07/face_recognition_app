@@ -1,18 +1,20 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStatusBar, QToolBar, \
-    QAction, QComboBox, QFileDialog, QErrorMessage, QMessageBox
-
-import pathlib
-from PyQt5 import QtGui
-from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
-from PyQt5.QtMultimediaWidgets import QCameraViewfinder
 import os
+import pathlib
 import time
+
+from PyQt5 import QtGui
+from PyQt5.QtMultimedia import QCamera, QCameraImageCapture, QCameraInfo
+from PyQt5.QtMultimediaWidgets import QCameraViewfinder
+from PyQt5.QtWidgets import QAction, QApplication, QComboBox, QErrorMessage, QMainWindow, QMessageBox, QStatusBar, \
+    QToolBar
+
 import WindowLoader
-import BrainOfFront
+from util_funcs import face_recognition
+
 
 class FaceRecognitionWindow(QMainWindow):
     def __init__(self, username):
-        super().__init__()        # setting geometry
+        super().__init__()  # setting geometry
         self.username = username
         self.window_loader = WindowLoader.WindowManager.get_instance()
         self.desktop = QApplication.desktop()
@@ -21,7 +23,7 @@ class FaceRecognitionWindow(QMainWindow):
         self.window_w = self.screenRect.width()
         self.width = 800
         self.height = 600
-        self.setGeometry((self.window_w - self.width)/2, (self.window_h - self.height)/2, self.width, self.height)
+        self.setGeometry((self.window_w - self.width) / 2, (self.window_h - self.height) / 2, self.width, self.height)
         self.setStyleSheet("background : lightgrey;")
         self.available_cameras = QCameraInfo.availableCameras()
         if not self.available_cameras:
@@ -69,23 +71,23 @@ class FaceRecognitionWindow(QMainWindow):
         self.show()
 
     def process_captured_image(self, id, img):
-        auth = self.authenticate(self.namePic)
-        print("Result of face Recognition "+auth)
-        if str(auth).lower() == "yes":
-            self.close()
+        response = self.authenticate(self.namePic)
+
+        if response['result'] == "ok":
             self.window_loader.load_dashboard_window(self.username, self.username, self.username)
+            self.camera.stop()
+            self.close()
         else:
             # err = QErrorMessage(self)
             # err.setWindowTitle("Error")
             # err.showMessage("You are not recognized!")
-            self.show_error("Authentication Error", f"You are not a student with ID {self.username}. Get the fuck out of here")
+            self.show_error("Authentication Error",
+                            f"You are not a student with ID {self.username}. Get the fuck out of here")
 
     def authenticate(self, img):
         time.sleep(1)
-        BrainOfFront.SendFile(img)
-        ResultFaceRec = BrainOfFront.ReadData()
-        return ResultFaceRec
-      
+        response = face_recognition(self.username, img)
+        return response
 
     def select_camera(self, i):
         self.camera = QCamera(self.available_cameras[i])
