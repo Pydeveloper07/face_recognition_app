@@ -4,6 +4,7 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QStyle, \
     QSlider, QHBoxLayout
 
+
 class MediaPlayer(QWidget):
     def __init__(self, file):
         super().__init__()
@@ -18,6 +19,12 @@ class MediaPlayer(QWidget):
         self.play_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.play_button.clicked.connect(self.play)
 
+        self.stop_button = QPushButton()
+        self.stop_button.setStyleSheet("border:none; padding:0")
+        self.stop_button.setEnabled(False)
+        self.stop_button.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
+        self.stop_button.clicked.connect(self.stop)
+
         self.position_slider = QSlider(QtCore.Qt.Horizontal)
         self.position_slider.setStyleSheet("border:none; padding:0")
         self.position_slider.setRange(0, 0)
@@ -26,6 +33,7 @@ class MediaPlayer(QWidget):
         control_layout = QHBoxLayout()
         control_layout.setContentsMargins(0, 0, 0, 0)
         control_layout.addWidget(self.play_button)
+        control_layout.addWidget(self.stop_button)
         control_layout.addWidget(self.position_slider)
 
         layout = QVBoxLayout()
@@ -44,12 +52,16 @@ class MediaPlayer(QWidget):
         self.media_player.setMedia(
             QMediaContent(QtCore.QUrl.fromLocalFile(file)))
         self.play_button.setEnabled(True)
+        self.stop_button.setEnabled(True)
 
     def play(self):
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.media_player.pause()
         else:
             self.media_player.play()
+
+    def stop(self):
+        self.media_player.stop()
 
     def media_state_changed(self):
         if self.media_player.state() == QMediaPlayer.PlayingState:

@@ -1,9 +1,13 @@
-from ControllerLogin import ControllerLoginWindow
-from FaceRecognition import FaceRecognitionWindow
-from Dashboard import DashboardWindow
-from PyQt5.QtWidgets import QApplication
 import sys
 import threading
+
+from PyQt5.QtWidgets import QApplication
+
+from ControllerLogin import ControllerLoginWindow
+from Dashboard import DashboardWindow
+from FaceRecognition import FaceRecognitionWindow
+from teacherBoard import TeacherBoard
+
 
 class WindowManager:
     __instance = None
@@ -22,18 +26,20 @@ class WindowManager:
         else:
             WindowManager.__instance = self
             self.app = QApplication(sys.argv)
+        self.window = None
 
     def load_login_window(self):
-        window_1 = ControllerLoginWindow()
-        sys.exit(self.app.exec_())
-
-
+        self.window = ControllerLoginWindow()
 
     def load_camera_window(self, username):
-        window_2 = FaceRecognitionWindow(username)
+        self.window = FaceRecognitionWindow(username)
 
+    def load_dashboard_window(self, name, surname, id):
+        self.window = DashboardWindow(name, surname, id)
 
+    def load_teacher_board_window(self, name):
+        self.window = TeacherBoard(name)
 
-    def load_dashboard_window(self, name,surname, id):
-        window_1 = DashboardWindow(name, surname, id)
-#  sys.exit(self.app.exec_())
+    def start(self):
+        self.load_login_window()
+        sys.exit(self.app.exec_())
