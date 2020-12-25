@@ -1,9 +1,8 @@
-from WindowLoader import WindowManager
 import BrainOfFront
+from WindowLoader import WindowManager
 
 if __name__ == "__main__":
     BrainOfFront.RunMain()
     window_loader = WindowManager()
-    window_loader.load_login_window()
+    window_loader.start()
     BrainOfFront.CloseAll()
-
