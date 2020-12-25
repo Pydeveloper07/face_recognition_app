@@ -1,12 +1,28 @@
 import pathlib
+
 lorem_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt " \
              "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " \
              "laboris nisi ut aliquip ex ea commodo consequat."
-video_file ='{}'.format(pathlib.Path().absolute()/"media/sample_video.mkv")
-
-
+video_file = '{}'.format(pathlib.Path().absolute() / "media/sample_video.mkv")
 
 subject_list = [
+    {
+        "id": 0,
+        "name": "Philosophy",
+        "professor": "Kahramon Yakubov",
+        "section": 3,
+        "description": lorem_text
+    },
+    {
+        "id": 1,
+        "name": "Introduction to Economics",
+        "professor": "Tongzon Jose",
+        "section": 2,
+        "description": lorem_text
+    },
+]
+
+subject_list1 = [
     {
         "id": 0,
         "name": "Philosophy",
