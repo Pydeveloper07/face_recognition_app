@@ -18,7 +18,7 @@ def send_request(action: str):
         elif action in ('register_enter_time', 'register_exit_time', 'logout'):
             req['course_id'] = args[1]
         elif action in ('face_recognition',):
-            req['image'] = encode_image(args[1])
+            req['photo'] = encode_image(args[1])
 
         SendData(json.dumps(req))
         resp = ReadData()
