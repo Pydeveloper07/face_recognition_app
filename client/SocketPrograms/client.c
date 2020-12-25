@@ -1,4 +1,3 @@
-//change functions according to your need but don't worked to update shared library
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -12,7 +11,7 @@
 
 int sockfd;
 
-int fsize(char *file) {
+int fsize(char* file) {
   int size;
   FILE* fh;
 
@@ -38,7 +37,7 @@ void SendFileToClient(char *fname)
         FILE *fp = fopen(fname,"rb");
         if(fp==NULL)
         {
-            printf("File open error");
+            printf("File opern error");
             exit(1);
         }
         //sending file size
@@ -96,22 +95,28 @@ void SendDatShit(char *buffer)
 
 char* ReadDatShit()
 {
-	int size = 32768;
-	char* buffer = malloc(size);
+    int buflen = 0;
 	int nn;
-	int bytes_received = 0;
-	bzero(buffer, size);
 
-//    FILE *sock_str = fdopen(dup(sockfd), "r");
-//    nn = fread(buffer, 1, size, sock_str);
-//    fclose(sock_str);
+    // get size of data
+	nn = read(sockfd, (char *)&buflen, sizeof(buflen));
+    if(nn<0)
+		perror("Error on 1st reading.");
 
-    nn = read(sockfd, buffer, size);
+    // allocate memory of size 'buflen'
+    buflen = ntohl(buflen);
+    char *buffer = malloc(buflen);
+    bzero(buffer, buflen);
 
-	//printf("ResClient : %s\n", buffer);
-	if(nn<0)
-		perror("Error on reading.");
+    //read data from socket
+    FILE *fp = fdopen(dup(sockfd), "r");
+    nn = fread(buffer, 1, buflen, fp);
+    fclose(fp);
 
+    //remove unnecessary part
+    buffer[buflen] = '\0';
+    if(nn<0)
+		perror("Error on 2nd reading.");
 
 	return buffer;
 
