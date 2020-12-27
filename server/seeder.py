@@ -81,16 +81,16 @@ def seed_courses(connection):
 
 
 def seed_takes(connection):
-    if len(db.get_takes_by_id(connection, 't1810001', 0)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810001', 0, 1))
-    if len(db.get_takes_by_id(connection, 't1810001', 4)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810001', 4, 1))
-    if len(db.get_takes_by_id(connection, 't1810002', 1)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810002', 1, 1))
-    if len(db.get_takes_by_id(connection, 't1810003', 2)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810003', 2, 1))
-    if len(db.get_takes_by_id(connection, 't1810004', 3)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810004', 3, 1))
+    if len(db.get_takes_by_id(connection, 't1810002', 0)) == 0:
+        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810002', 0, 1))
+    if len(db.get_takes_by_id(connection, 't1810002', 4)) == 0:
+        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810002', 4, 1))
+    if len(db.get_takes_by_id(connection, 't1810003', 1)) == 0:
+        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810003', 1, 1))
+    if len(db.get_takes_by_id(connection, 't1810004', 2)) == 0:
+        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810004', 2, 1))
+    if len(db.get_takes_by_id(connection, 't1810005', 3)) == 0:
+        connection.execute(db.INSERT_INITIAL_TAKES, ('t1810005', 3, 1))
     if len(db.get_takes_by_id(connection, 'u1810087', 0)) == 0:
         connection.execute(db.INSERT_INITIAL_TAKES, ('u1810087', 0, 1))
     if len(db.get_takes_by_id(connection, 'u1810036', 0)) == 0:
