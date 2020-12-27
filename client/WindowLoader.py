@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication
 from ControllerLogin import ControllerLoginWindow
 from Dashboard import DashboardWindow
 from FaceRecognition import FaceRecognitionWindow
-#from teacherBoard import TeacherBoard
+from teacherBoard import TeacherBoard
 
 
 class WindowManager:
@@ -37,8 +37,8 @@ class WindowManager:
     def load_dashboard_window(self, name, surname, id):
         self.window = DashboardWindow(name, surname, id)
 
-    def load_teacher_board_window(self, name):
-        self.window = TeacherBoard(name)
+    def load_teacher_board_window(self, name, username):
+        self.window = TeacherBoard(name, username)
 
     def start(self):
         self.load_login_window()
