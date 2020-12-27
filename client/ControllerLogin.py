@@ -49,7 +49,7 @@ class ControllerLoginWindow(QDialog):
             return
         else:
             response = self.authenticate(username, password)
-            if response.get('status') == 'ok':
+            if response.get('result') == 'ok':
                 user_type = response.get('type')
                 name = response.get('name')
                 if user_type == 0:
