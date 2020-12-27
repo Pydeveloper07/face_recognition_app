@@ -3,6 +3,8 @@ import database as db
 import pathlib
 import base64
 import seeder
+import faceRecognition as fr
+import os
 
 db_connection = db.connect()
 
@@ -18,8 +20,12 @@ def setup_database():
 def parse_request(request_text):
     dict_request = json.loads(request_text)
 
+
     if dict_request['action'] == 'login':
-        result = authenticate_user(dict_request['username'], dict_request['password'])
+        result = authenticate_user(dict_request['student_id'], dict_request['password'])
+        print(result)
+
+
     elif dict_request['action'] == 'register_enter_time':
         result = register_enter_time(dict_request['student_id'], dict_request['course_id'])
     elif dict_request['action'] == 'register_exit_time':
@@ -42,8 +48,10 @@ def parse_request(request_text):
 
 
 def authenticate_user(username, password):
+
     user = db.get_user_by_id_password(db_connection, username, password)
     dict_output = {}
+
 
     if len(user) > 0:
         dict_output['result'] = 'ok'
@@ -52,6 +60,7 @@ def authenticate_user(username, password):
     else:
         dict_output['result'] = 'error'
         dict_output['error_text'] = 'User not found'
+    print(dict_output)
 
     return json.dumps(dict_output)
 
@@ -84,7 +93,6 @@ def get_student_courses(user_id):
             'professor': course[4]
         }
         result.append(course_structure)
-
     if len(result) > 0:
         return json.dumps({'result': 'ok',
                            'courses': result})
@@ -135,9 +143,10 @@ def get_students_of_course(course_id):
 def face_recognition(user_id, file):
     with open(pathlib.Path().absolute() / 'student_image_1.jpg', 'wb') as file_to_save:
         file_to_save.write(base64.b64decode(file))
-
-    if False:
-        return "Have fun with my code. You'll have to implement the logic!"
+    pred = fr.face_recognition('student_image_1.jpg')
+    os.remove('student_image_1.jpg')
+    if pred==user_id:
+        return '{"result": "ok"}'
     else:
         return '{"result": "failed"}'
 
