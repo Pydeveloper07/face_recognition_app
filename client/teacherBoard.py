@@ -4,25 +4,29 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QPushButton, QWidget, QButtonGr
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from datetime import datetime
-from teacherBoardModels import subjects
+import teacherBoardController
 import sys
 
 
 class TeacherBoard(QWidget):
-    def __init__(self, fullname=""):
+    def __init__(self, fullname, username):
         super().__init__()
         self.fullname = fullname
-        self.curr_sub = None
-        self.curr_stud = None
+        self.username = username
+        self.controller = teacherBoardController.TeachBoardController()
+        self.courses = None
+        self.course_id = None
+        self.student_id = None
         self.initMainUI()
         self.initTopBar()
         self.initMainWidgets()
         self.initCourses()
         self.initStudentWidgets()
         self.initDetailsWidgets()
+        self.show()
 
     def initMainUI(self):
-        self.setGeometry(200, 200, 1220, 720)
+        self.setGeometry(200, 200, 1120, 720)
         self.setWindowTitle("Dashboard")
         self.mainVBox = QVBoxLayout()
         self.setLayout(self.mainVBox)
@@ -67,7 +71,7 @@ class TeacherBoard(QWidget):
         self.studentsTable = QTableWidget()
         self.studentsVBox.addWidget(self.studentsTable)
         self.studentsWidget.setLayout(self.studentsVBox)
-        self.studentsTable.setColumnCount(6)
+        self.studentsTable.setColumnCount(5)
         self.studentsTable.setStyleSheet("font-family: 'Times New Roman'; font-size: 22px;")
 
     def initDetailsWidgets(self):
@@ -79,23 +83,27 @@ class TeacherBoard(QWidget):
         self.detailsTable.setStyleSheet("font-family: 'Times New Roman'; font-size: 25px;")
 
     def initCourses(self):
+        resp = self.controller.get_teacher_courses(self.username)
+        if resp['result'] == 'error':
+            return
+        self.courses = resp['courses']
         self.coursesGrid = QGridLayout()
         self.coursesButtonGroup = QButtonGroup()
         self.coursesButtonGroup.buttonClicked[int].connect(self.handleGoToCourseButton)
         counter = 0
-        for subject in subjects:
+        for course in self.courses:
             grp = QGroupBox()
             vbox = QVBoxLayout()
-            s_label = QLabel(subject["name"])
+            s_label = QLabel(course["name"])
             s_label.setStyleSheet("font-family: 'Times New Roman'; font-size: 45px;")
-            p_label = QLabel("Professor: " + subject["professor"])
+            p_label = QLabel("Professor: " + self.fullname)
             p_label.setStyleSheet("font-family: 'Sanserif'; font-size: 20px;")
-            n_label = QLabel("Number of Students: " + str(len(subject["students"])))
+            n_label = QLabel("Number of Students: " + str(course["student_count"]))
             n_label.setStyleSheet("font-family: 'Sanserif'; font-size: 20px;")
             btn = QPushButton("Go To Course")
             btn.setStyleSheet("font-family: 'Sanserif'; font-size: 30px; border: 1px solid #80adad; border-radius: 25px; backgorund-color: #80adad;")
             btn.setFixedSize(300, 60)
-            self.coursesButtonGroup.addButton(btn, int(subject["id"]))
+            self.coursesButtonGroup.addButton(btn, course["id"])
             vbox.addWidget(s_label)
             vbox.addWidget(p_label)
             vbox.addWidget(n_label)
@@ -108,32 +116,34 @@ class TeacherBoard(QWidget):
 
     def initStudentsTable(self):
         self.studentsTable.clear()
-        self.studentsTable.setRowCount(len(self.curr_sub['students']))
-        self.studentsTable.setHorizontalHeaderLabels(['Student ID', 'FullName', 'Section', 'First Access', 'Last Access', ''])
+        resp = self.controller.get_students_of_course(self.course_id)
+        if resp['result'] == 'error':
+            return
+        students = resp['students']
+        self.studentsTable.setRowCount(len(students))
+        self.studentsTable.setHorizontalHeaderLabels(['Student ID', 'FullName', 'First Access', 'Last Access', ''])
 
         self.detailsButtonGroup = QButtonGroup()
         self.detailsButtonGroup.buttonClicked[int].connect(self.handleDetailsButton)
 
         for row in range(self.studentsTable.rowCount()):
-            student = self.curr_sub['students'][row]
-            for col in range(0, 6):
+            student = students[row]
+            for col in range(0, 5):
                 text = "Did Not Access"
                 if col == 0:
-                    text = f"{student['student_id']}"
+                    text = f"{student['id']}"
                 elif col == 1:
-                    text = f"{student['fullname']}"
+                    text = f"{student['name']}"
                 elif col == 2:
-                    text = f"00{student['section']}"
+                    if student['first_access_date']:
+                        text = f"{student['first_access_date']}"
                 elif col == 3:
-                    if len(student['access']) > 0:
-                        text = f"{student['access'][0][0]}"
-                elif col == 4:
-                    if len(student['access']) > 0:
-                        text = f"{student['access'][-1][0]}"
+                    if student['last_access_date']:
+                        text = f"{student['last_access_date']}"
                 else:
                     btn = QPushButton("Details")
                     btn.setStyleSheet("font-size: 20px;")
-                    self.detailsButtonGroup.addButton(btn, int(student['id']))
+                    self.detailsButtonGroup.addButton(btn, int(student['id'][1: len(student['id'])]))
                     self.studentsTable.setCellWidget(row, col, btn)
                     break
                 item = QTableWidgetItem(text)
@@ -142,24 +152,29 @@ class TeacherBoard(QWidget):
 
         self.studentsTable.setColumnWidth(0, 150)
         self.studentsTable.setColumnWidth(1, 300)
-        self.studentsTable.setColumnWidth(2, 100)
+        self.studentsTable.setColumnWidth(2, 250)
         self.studentsTable.setColumnWidth(3, 250)
-        self.studentsTable.setColumnWidth(4, 250)
 
     def initDetailsTable(self):
         self.detailsTable.clear()
-        self.detailsTable.setRowCount(len(self.curr_stud["access"]))
+        resp = self.controller.get_students_enter_exit_times(self.course_id, self.student_id)
+
+        if resp['result'] == 'error':
+            return
+
+        times = resp['times_list']
+        self.detailsTable.setRowCount(len(times))
         self.detailsTable.setHorizontalHeaderLabels(['Date', 'Entered', 'Exited', 'Time Spent'])
 
         for row in range(self.detailsTable.rowCount()):
-            temp = self.curr_stud['access'][row]
+            temp = times[row]
             for col in range(0, 4):
                 if col == 0:
-                    text = f"{temp[0][0 : 10]}"
+                    text = f"{temp['enter_time'][0 : 10]}"
                 elif col == 1:
-                    text = f"{temp[0][11 : 19]}"
+                    text = f"{temp['enter_time'][11 : 19]}"
                 elif col == 2:
-                    text = f"{temp[1][11 : 19]}"
+                    text = f"{temp['exit_time'][11 : 19]}"
                 else:
                     text = self.timeDiff(temp)
                 item = QTableWidgetItem(text)
@@ -174,50 +189,42 @@ class TeacherBoard(QWidget):
     def handleGoBackButton(self):
         # Checking which widget is not hidden. If Details Widget is open then go back to Students Widget
         if self.studentsWidget.isHidden():
-            self.curr_stud = None  # Setting current student to None
+            self.mainLabel.setText("Student List")
+            self.student_id = None  # Setting current student to None
             self.detailsWidget.setHidden(True)  # Hide Details Widget
             self.studentsWidget.setHidden(False)  # Show Students Widget
         else:
+            self.mainLabel.setText(f"Welcome, {self.fullname}")
             # Executes if the Students Widget is not hidden
-            self.curr_sub = None  # Setting current subject to None
+            self.course_id = None  # Setting current subject to None
             self.goBackButton.setHidden(True)  # Hide Go Back button
             self.studentsWidget.setHidden(True)  # Hide Students Widget
             self.coursesWidget.setHidden(False)  # Show Courses Widget
 
     def handleGoToCourseButton(self, course_id):
+        self.mainLabel.setText("Student List")
         self.goBackButton.setHidden(False) # Show Go Back button
-        # Choosing the subject
-        for subject in subjects:
-            if course_id == int(subject["id"]):
-                self.curr_sub = subject
-                break
+        # Choosing the course
+        self.course_id = course_id
         self.initStudentsTable()  # Initializing the table with students info
         self.coursesWidget.setHidden(True)  # Hide the Courses Widget
         self.studentsWidget.setHidden(False)  # Show Students Widget
 
     def handleDetailsButton(self, student_id):
-        for student in self.curr_sub["students"]:
-            if student_id == int(student["id"]):
-                self.curr_stud = student
-                break
+        self.student_id = f"u{student_id}"
+        self.mainLabel.setText(f"Time Logs of {self.student_id}")
         self.initDetailsTable()  # Initialing the table with chosen student's logs
         self.studentsWidget.setHidden(True)  # Hide Students Widget
         self.detailsWidget.setHidden(False)  # Show Details Widget
 
     # Returns the time difference between two time passed in a list
     @staticmethod
-    def timeDiff(accessList: list):
-        d1 = datetime.strptime(accessList[0], "%Y-%m-%d %H:%M:%S")
-        d2 = datetime.strptime(accessList[1], "%Y-%m-%d %H:%M:%S")
+    def timeDiff(accessList):
+        d1 = datetime.strptime(accessList['enter_time'], "%Y-%m-%d %H:%M:%S")
+        d2 = datetime.strptime(accessList['exit_time'], "%Y-%m-%d %H:%M:%S")
         return str(d2 - d1)
 
     # Ends the program
     @staticmethod
     def logOut():
         sys.exit()
-
-
-app = QtWidgets.QApplication(sys.argv)
-win = TeacherBoard("Kamronbek Rustamov")
-win.show()
-app.exec()

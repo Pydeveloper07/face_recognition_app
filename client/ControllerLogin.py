@@ -55,7 +55,7 @@ class ControllerLoginWindow(QDialog):
                 if user_type == 0:
                     self.window_loader.load_camera_window(username)
                 elif user_type == 1:
-                    self.window_loader.load_teacher_board_window(name)
+                    self.window_loader.load_teacher_board_window(name, username)
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
