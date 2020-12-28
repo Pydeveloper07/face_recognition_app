@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHB
 import WindowLoader
 import util_funcs
 from MediaPlayer import MediaPlayer
-from models import subject_list, video_file
+from models import video_file, subject_list
 
 
 # subject_list = []
@@ -18,8 +18,8 @@ class DashboardWindow(QWidget):
         # uncomment when database is created
         # global subject_list
         # resp = util_funcs.get_subject_list(username)
-        # if resp['status'] == 'ok':
-        #     subject_list = resp['subjects']
+        # if resp['result'] == 'ok':
+        #     subject_list = resp['courses']
 
         self.first_name = first_name
         self.last_name = last_name
@@ -197,9 +197,8 @@ class DashboardWindow(QWidget):
         self.stacked_widget.setCurrentIndex(id)
 
     def log_out(self):
-        username = self.username
-        self.window_loader.load_login_window()
-        util_funcs.logout(username, self.current_subject_id)
+        # username = self.username
+        # util_funcs.logout(username, self.current_subject_id)
         self.close()
 
     def closeEvent(self, event):
