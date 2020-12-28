@@ -85,7 +85,7 @@ void SendDatShit(char *buffer)
 	if(nn<0)
 		perror("Error on 1st Writing!");
 
-    printf("%s", buffer);
+    //printf("%s", buffer);
     nn = write(sockfd, buffer, strlen(buffer));
 
 	if(nn<0)
