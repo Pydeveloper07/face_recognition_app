@@ -19,30 +19,34 @@ libc.free.argtypes = (ctypes.c_void_p,)
 # Running Main()
 c_lib.main()
 
-c_lib.NewProcess()
 
 utils.setup_database()
 
 while True:
-    _result = c_lib.ReadDatShit()
+    c_lib.NewProcess()
+    if c_lib.Forker()==0:
+        c_lib.Closesockfd()
 
-    if _result is None:
-        continue
+        while True:
+            _result = c_lib.ReadDatShit()
 
-    Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
-    if len(Value)==0:
-        break
+            if _result is None:
+                continue
 
-    libc.free(_result)
+            Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
+            if len(Value)==0:
+                break
 
-    output = ''
+            libc.free(_result)
 
-    if len(Value) > 0:
-        try:
-            output = utils.parse_request(Value)
-        except:
-            print("error occurred while parsing request")
+            output = ''
 
-    if output != '':
-        c_lib.SendDatShit(output.encode("ISO-8859–1"))
-c_lib.CloseShit()
+            if len(Value) > 0:
+                try:
+                    output = utils.parse_request(Value)
+                except:
+                    print("error occurred while parsing request")
+
+            if output != '':
+                c_lib.SendDatShit(output.encode("ISO-8859–1"))
+c_lib.Closenewsockdf()
