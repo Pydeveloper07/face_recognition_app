@@ -32,18 +32,18 @@ class WindowManager:
     def load_login_window(self):
         self.window = ControllerLoginWindow()
 
-    def load_camera_window(self, username):
-        self.window = FaceRecognitionWindow(username)
+    def load_camera_window(self, username, name):
+        self.window = FaceRecognitionWindow(username, name)
 
     def load_dashboard_window(self, name, surname, id):
         self.window = DashboardWindow(name, surname, id)
 
     def load_teacher_board_window(self, name, username):
         self.window = TeacherBoard(name, username)
+
     def CloseConnection(self):
         print("!!!CLOSING SOCKETS!!!")
         BrainOfFront.CloseAll()
-
 
     def start(self):
         self.load_login_window()

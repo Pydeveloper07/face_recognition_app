@@ -5,7 +5,7 @@ lorem_text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ei
              "laboris nisi ut aliquip ex ea commodo consequat."
 video_file = '{}'.format(pathlib.Path().absolute() / "media/sample_video.mkv")
 
-subject_list = [
+subject_list1 = [
     {
         "id": 0,
         "name": "Philosophy",
@@ -22,7 +22,7 @@ subject_list = [
     },
 ]
 
-subject_list1 = [
+subject_list = [
     {
         "id": 0,
         "name": "Philosophy",

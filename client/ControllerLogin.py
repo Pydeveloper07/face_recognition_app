@@ -1,11 +1,8 @@
-
-from PyQt5.QtWidgets import QApplication, \
-    QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QMessageBox
-from PyQt5 import uic, QtCore, QtGui
+from PyQt5 import QtCore, uic
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QMessageBox, QPushButton, QVBoxLayout
 
 import WindowLoader
 import util_funcs
-import  BrainOfFront
 
 
 class ControllerLoginWindow(QDialog):
@@ -55,7 +52,7 @@ class ControllerLoginWindow(QDialog):
                 user_type = response.get('type')
                 name = response.get('name')
                 if user_type == 0:
-                    self.window_loader.load_camera_window(username)
+                    self.window_loader.load_camera_window(username, name)
                 elif user_type == 1:
                     self.window_loader.load_teacher_board_window(name, username)
                 self.fromSys = True
@@ -77,9 +74,8 @@ class ControllerLoginWindow(QDialog):
         msgbox.setText(msg)
         msgbox.setStandardButtons(QMessageBox.Ok)
         retval = msgbox.exec_()
+
     def closeEvent(self, event):
         if not self.fromSys:
             self.window_loader.CloseConnection()
         event.accept()
-
-
