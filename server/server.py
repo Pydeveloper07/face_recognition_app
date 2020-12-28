@@ -30,6 +30,9 @@ while True:
         continue
 
     Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
+    if len(Value)==0:
+        break
+
     libc.free(_result)
 
     output = ''
@@ -42,13 +45,4 @@ while True:
 
     if output != '':
         c_lib.SendDatShit(output.encode("ISO-8859–1"))
-
-# c_lib.ReceiveFile()
-#
-# # Face Recognition goes here
-#
-# resFaceVar = "yes"
-#
-# c_lib.SendDatShit(resFaceVar.encode("ISO-8859–1"))
-
-# c_lib.CloseShit()
+c_lib.CloseShit()

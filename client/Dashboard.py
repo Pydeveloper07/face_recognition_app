@@ -201,3 +201,7 @@ class DashboardWindow(QWidget):
         self.window_loader.load_login_window()
         util_funcs.logout(username, self.current_subject_id)
         self.close()
+
+    def closeEvent(self, event):
+        self.window_loader.CloseConnection()
+        event.accept()

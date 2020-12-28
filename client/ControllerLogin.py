@@ -5,6 +5,7 @@ from PyQt5 import uic, QtCore, QtGui
 
 import WindowLoader
 import util_funcs
+import  BrainOfFront
 
 
 class ControllerLoginWindow(QDialog):
@@ -25,6 +26,7 @@ class ControllerLoginWindow(QDialog):
         self.fdbck_passw_label = self.findChild(QLabel, "feedback_password")
         self.password_field = self.findChild(QLineEdit, "password_field")
         self.password_field.setEchoMode(QLineEdit.Password)
+        self.fromSys = False
         self.submit_btn = self.findChild(QPushButton, "submit_btn")
         self.init_ui()
 
@@ -56,6 +58,7 @@ class ControllerLoginWindow(QDialog):
                     self.window_loader.load_camera_window(username)
                 elif user_type == 1:
                     self.window_loader.load_teacher_board_window(name, username)
+                self.fromSys = True
                 self.close()
             else:
                 self.show_error_msg("Wrong Credentials!")
@@ -74,4 +77,9 @@ class ControllerLoginWindow(QDialog):
         msgbox.setText(msg)
         msgbox.setStandardButtons(QMessageBox.Ok)
         retval = msgbox.exec_()
+    def closeEvent(self, event):
+        if not self.fromSys:
+            self.window_loader.CloseConnection()
+        event.accept()
+
 
