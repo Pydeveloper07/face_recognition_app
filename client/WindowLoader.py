@@ -7,6 +7,7 @@ from ControllerLogin import ControllerLoginWindow
 from Dashboard import DashboardWindow
 from FaceRecognition import FaceRecognitionWindow
 from teacherBoard import TeacherBoard
+import BrainOfFront
 
 
 class WindowManager:
@@ -39,6 +40,10 @@ class WindowManager:
 
     def load_teacher_board_window(self, name, username):
         self.window = TeacherBoard(name, username)
+    def CloseConnection(self):
+        print("!!!CLOSING SOCKETS!!!")
+        BrainOfFront.CloseAll()
+
 
     def start(self):
         self.load_login_window()

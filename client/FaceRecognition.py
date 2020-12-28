@@ -40,6 +40,7 @@ class FaceRecognitionWindow(QMainWindow):
         self.viewfinder = QCameraViewfinder()
         self.viewfinder.show()
         self.setCentralWidget(self.viewfinder)
+        self.fromSys = False
 
         self.select_camera(0)
 
@@ -77,6 +78,7 @@ class FaceRecognitionWindow(QMainWindow):
         if response['result'] == "ok":
             self.window_loader.load_dashboard_window(self.username, self.username, self.username)
             self.camera.stop()
+            self.fromSys = True
             self.close()
         else:
             # err = QErrorMessage(self)
@@ -130,6 +132,7 @@ class FaceRecognitionWindow(QMainWindow):
         error = QErrorMessage(self)
         error.showMessage(msg)
 
-    # def closeEvent(self, event):
-    #      BrainOfFront.CloseAll()
-    #      event.accept()
+    def closeEvent(self, event):
+        if not self.fromSys:
+            self.window_loader.CloseConnection()
+        event.accept()
