@@ -13,8 +13,9 @@ from util_funcs import face_recognition
 
 
 class FaceRecognitionWindow(QMainWindow):
-    def __init__(self, username):
+    def __init__(self, username, name):
         super().__init__()  # setting geometry
+        self.name = name
         self.username = username
         self.window_loader = WindowLoader.WindowManager.get_instance()
         self.desktop = QApplication.desktop()
@@ -40,7 +41,6 @@ class FaceRecognitionWindow(QMainWindow):
         self.viewfinder = QCameraViewfinder()
         self.viewfinder.show()
         self.setCentralWidget(self.viewfinder)
-        self.fromSys = False
 
         self.select_camera(0)
 
@@ -71,25 +71,23 @@ class FaceRecognitionWindow(QMainWindow):
         self.setWindowTitle("Face verification")
         self.show()
 
-    def process_captured_image(self, id, img):
+    def process_captured_image(self, img):
         response = self.authenticate(self.namePic)
-        os.remove(self.namePic)
-
         if response['result'] == "ok":
-            self.window_loader.load_dashboard_window(self.username, self.username, self.username)
+            f_name, l_name = self.name.split(' ')
+            self.window_loader.load_dashboard_window(f_name, l_name, self.username)
             self.camera.stop()
-            self.fromSys = True
             self.close()
         else:
             # err = QErrorMessage(self)
             # err.setWindowTitle("Error")
             # err.showMessage("You are not recognized!")
             self.show_error("Authentication Error",
-                            f"You are not a student with ID {self.username}. Get the fuck out of here")
+                            f"You are not a student with ID {self.user_id}. Get the fuck out of here")
 
     def authenticate(self, img):
         time.sleep(1)
-        response = face_recognition(self.username, img)
+        response = face_recognition(self.user_id, img)
         return response
 
     def select_camera(self, i):
@@ -132,7 +130,6 @@ class FaceRecognitionWindow(QMainWindow):
         error = QErrorMessage(self)
         error.showMessage(msg)
 
-    def closeEvent(self, event):
-        if not self.fromSys:
-            self.window_loader.CloseConnection()
-        event.accept()
+    # def closeEvent(self, event):
+    #      BrainOfFront.CloseAll()
+    #      event.accept()
