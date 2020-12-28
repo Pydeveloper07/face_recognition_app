@@ -14,7 +14,7 @@ def send_request(action: str):
         req = {'action': action}
 
         if action == 'login':
-            req['username'] = args[0]
+            req['student_id'] = args[0]
             req['password'] = args[1]
         elif action in ('register_enter_time', 'register_exit_time'):
             req['student_id'] = args[0]
