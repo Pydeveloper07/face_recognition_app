@@ -92,15 +92,16 @@ char* ReadDatShit()
 
 }
 
-
-void CloseShit()
+void Closesockfd()
 {
-
-	close(newsockfd);
-	close(sockfd);
-
-
+    close(sockfd);
 }
+
+void Closenewsockdf()
+{
+    close(newsockfd);
+}
+
 
 
 int Forker()
@@ -112,7 +113,7 @@ void NewProcess()
 {
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if(newsockfd <0 )
-	      perror("Error on Accept");
+	      exit(1);
 	printf("Connection accepted from %s:%d\n", inet_ntoa(cli_addr.sin_addr),ntohs(cli_addr.sin_port));
 }
 
