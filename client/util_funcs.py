@@ -11,14 +11,19 @@ def encode_image(filename):
 
 def send_request(action: str):
     def inner(*args):
-        req = {'action': action, 'student_id': args[0]}
+        req = {'action': action}
 
         if action == 'login':
+            req['username'] = args[0]
             req['password'] = args[1]
-        elif action in ('register_enter_time', 'register_exit_time', 'logout'):
+        elif action in ('register_enter_time', 'register_exit_time'):
+            req['student_id'] = args[0]
             req['course_id'] = args[1]
         elif action in ('face_recognition',):
+            req['student_id'] = args[0]
             req['photo'] = encode_image(args[1])
+        elif action == 'get_student_courses':
+            req['student_id'] = args[0]
 
         SendData(json.dumps(req))
         resp = ReadData()
