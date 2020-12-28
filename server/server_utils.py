@@ -23,7 +23,7 @@ def parse_request(request_text):
 
     if dict_request['action'] == 'login':
         result = authenticate_user(dict_request['student_id'], dict_request['password'])
-        print(result)
+
 
 
     elif dict_request['action'] == 'register_enter_time':
@@ -60,7 +60,7 @@ def authenticate_user(username, password):
     else:
         dict_output['result'] = 'error'
         dict_output['error_text'] = 'User not found'
-    print(dict_output)
+
 
     return json.dumps(dict_output)
 

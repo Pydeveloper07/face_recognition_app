@@ -30,7 +30,6 @@ while True:
         continue
 
     Value = ctypes.c_char_p(_result).value.decode("ISO-8859–1")
-    print(Value)
     libc.free(_result)
 
     output = ''
