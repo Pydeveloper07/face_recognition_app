@@ -72,9 +72,9 @@ class FaceRecognitionWindow(QMainWindow):
         self.show()
 
     def process_captured_image(self, img):
+        self.window_loader.load_processing_window(self.username, self.name, self.namePic)
         self.camera.stop()
         self.close()
-        self.window_loader.load_processing_window(self.username, self.name, self.namePic)
     #     response = self.authenticate(self.namePic)
     #     os.remove(self.namePic)
     #     if response['result'] == "ok":
