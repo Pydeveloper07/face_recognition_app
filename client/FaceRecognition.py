@@ -72,24 +72,27 @@ class FaceRecognitionWindow(QMainWindow):
         self.show()
 
     def process_captured_image(self, img):
-        response = self.authenticate(self.namePic)
-        os.remove(self.namePic)
-        if response['result'] == "ok":
-            f_name, l_name = self.name.split(' ')
-            self.window_loader.load_dashboard_window(f_name, l_name, self.username)
-            self.camera.stop()
-            self.close()
-        else:
-            # err = QErrorMessage(self)
-            # err.setWindowTitle("Error")
-            # err.showMessage("You are not recognized!")
-            self.show_error("Authentication Error",
-                            f"You are not a student with ID {self.username}. Get the fuck out of here")
-
-    def authenticate(self, img):
-        time.sleep(1)
-        response = face_recognition(self.username, img)
-        return response
+        self.camera.stop()
+        self.close()
+        self.window_loader.load_processing_window(self.username, self.name, self.namePic)
+    #     response = self.authenticate(self.namePic)
+    #     os.remove(self.namePic)
+    #     if response['result'] == "ok":
+    #         f_name, l_name = self.name.split(' ')
+    #         self.window_loader.load_dashboard_window(f_name, l_name, self.username)
+    #         self.camera.stop()
+    #         self.close()
+    #     else:
+    #         # err = QErrorMessage(self)
+    #         # err.setWindowTitle("Error")
+    #         # err.showMessage("You are not recognized!")
+    #         self.show_error("Authentication Error",
+    #                         f"You are not a student with ID {self.username}. Get the fuck out of here")
+    #
+    # def authenticate(self, img):
+    #     time.sleep(1)
+    #     response = face_recognition(self.username, img)
+    #     return response
 
     def select_camera(self, i):
         self.camera = QCamera(self.available_cameras[i])

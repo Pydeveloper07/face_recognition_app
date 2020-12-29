@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication
 from ControllerLogin import ControllerLoginWindow
 from Dashboard import DashboardWindow
 from FaceRecognition import FaceRecognitionWindow
+from ProcessingWindow import ProcessingWindow
 from teacherBoard import TeacherBoard
 import BrainOfFront
 
@@ -34,6 +35,9 @@ class WindowManager:
 
     def load_camera_window(self, username, name):
         self.window = FaceRecognitionWindow(username, name)
+
+    def load_processing_window(self, username, name, namePic):
+        self.window = ProcessingWindow(username, name, namePic)
 
     def load_dashboard_window(self, name, surname, id):
         self.window = DashboardWindow(name, surname, id)
