@@ -83,7 +83,7 @@ class FaceRecognitionWindow(QMainWindow):
             # err.setWindowTitle("Error")
             # err.showMessage("You are not recognized!")
             self.show_error("Authentication Error",
-                            f"You are not a student with ID {self.user_id}. Get the fuck out of here")
+                            f"You are not a student with ID {self.username}. Get the fuck out of here")
 
     def authenticate(self, img):
         time.sleep(1)
@@ -117,6 +117,7 @@ class FaceRecognitionWindow(QMainWindow):
         msg.setInformativeText(informative_text)
         msg.setStandardButtons(QMessageBox.Close)
         retval = msg.exec_()
+        self.camera.stop()
         self.close()
         self.window_loader.load_login_window()
 
