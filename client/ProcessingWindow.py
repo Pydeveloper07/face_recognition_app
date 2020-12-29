@@ -1,7 +1,7 @@
 import os
 import time
 
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QMessageBox
@@ -62,6 +62,11 @@ class ProcessingWindow(QDialog):
         else:
             self.show_error("Authentication Error",
                             f"You are not a student with ID {self.username}. Get the fuck out of here")
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        if os.path.isfile(self.namePic):
+            os.remove(self.namePic)
+        super().closeEvent(a0)
 
     def show_error(self, text, informative_text):
         msg = QMessageBox()
