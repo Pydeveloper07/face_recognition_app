@@ -6,20 +6,19 @@ from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHB
 import WindowLoader
 import util_funcs
 from MediaPlayer import MediaPlayer
-from models import video_file, subject_list
+from models import video_file
 
-
-# subject_list = []
+subject_list = []
 
 
 class DashboardWindow(QWidget):
     def __init__(self, first_name="", last_name="", username=""):
         super().__init__()
         # uncomment when database is created
-        # global subject_list
-        # resp = util_funcs.get_subject_list(username)
-        # if resp['result'] == 'ok':
-        #     subject_list = resp['courses']
+        global subject_list
+        resp = util_funcs.get_subject_list(username)
+        if resp['result'] == 'ok':
+            subject_list = resp['courses']
 
         self.first_name = first_name
         self.last_name = last_name
