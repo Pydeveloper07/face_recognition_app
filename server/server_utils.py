@@ -20,12 +20,8 @@ def setup_database():
 def parse_request(request_text):
     dict_request = json.loads(request_text)
 
-
     if dict_request['action'] == 'login':
         result = authenticate_user(dict_request['student_id'], dict_request['password'])
-
-
-
     elif dict_request['action'] == 'register_enter_time':
         result = register_enter_time(dict_request['student_id'], dict_request['course_id'])
     elif dict_request['action'] == 'register_exit_time':

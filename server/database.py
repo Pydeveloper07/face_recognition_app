@@ -74,16 +74,16 @@ GET_STUDENTS_OF_COURSE = """
     IFNULL(MM.last_access_time, DATETIME("0000-01-01 00:00:00")) as last_access_time
     FROM users as U
     INNER JOIN takes as T on U.id = T.user_id
-    LEFT JOIN (SELECT MIN(DATETIME(enter_time)) as first_access_time, MAX(DATETIME(exit_time)) as last_access_time, student_id
+    LEFT JOIN (SELECT MIN(DATETIME(enter_time)) as first_access_time, MAX(DATETIME(exit_time)) as last_access_time, student_id, course_id
                FROM time_tracker
-               GROUP BY student_id) AS MM ON U.id = MM.student_id
+               GROUP BY student_id, course_id) AS MM ON T.user_id = MM.student_id AND T.course_id = MM.course_id 
     WHERE U.type = 0 AND T.course_id = ?
     ORDER BY U.name     
 """
 
 GET_STUDENTS_ENTER_EXIT_TIMES = """
     SELECT U.name, T.enter_time, T.exit_time
-    FROM time_tracker AS T INNER JOIN users AS U
+    FROM time_tracker AS T INNER JOIN users AS U on T.student_id = U.id
     WHERE (U.id, T.course_id) = (?,?)
 """
 

@@ -15,12 +15,12 @@ utils.setup_database()
 #         "course_id": 3})
 # ))
 
-# print(utils.parse_request(
-#     json.dumps({
-#         "action": "get_students_of_course",
-#         "course_id": '0'
-#     })
-# ))
+print(utils.parse_request(
+    json.dumps({
+        "action": "get_students_of_course",
+        "course_id": '0'
+    })
+))
 
 # print(utils.parse_request(
 #     json.dumps({
@@ -36,18 +36,17 @@ utils.setup_database()
 #         "course_id": 1})
 # ))
 
-
-print(utils.parse_request(
-    json.dumps({
-        "action": "get_teacher_courses",
-        "teacher_id": "t1810001",
-        "course_id": 1})
-))
+#
+# print(utils.parse_request(
+#     json.dumps({
+#         "action": "get_teacher_courses",
+#         "teacher_id": "t1810002"})
+# ))
 
 # print(utils.parse_request(
 #     json.dumps({
 #         "action": "get_students_enter_exit_times",
-#         "course_id": 1,
+#         "course_id": 0,
 #         "student_id": 'u1810087'
 #     })
 # ))
