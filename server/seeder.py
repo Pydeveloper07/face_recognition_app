@@ -51,7 +51,7 @@ def seed_courses(connection):
                                                        'between programs and the computer hardware'))
     if len(db.get_course_by_id(connection, 4)) == 0:
         connection.execute(db.INSERT_INITIAL_COURSES, (4, "System Programming",
-                                                       'An System Programming lorem ipsum'))
+                                                       'Systems programming, or system programming, is the activity of programming[1] computer system software. The primary distinguishing characteristic of systems programming when compared to application programming is that application programming aims to produce software which provides services to the user directly (e.g. word processor), whereas systems programming aims to produce software and software platforms which provide services to other software, are performance constrained, or both'))
 
     if len(db.get_course_by_id(connection, 1)) == 0:
         connection.execute(db.INSERT_INITIAL_COURSES, (1, "Database",
@@ -91,23 +91,10 @@ def seed_takes(connection):
         connection.execute(db.INSERT_INITIAL_TAKES, ('t1810004', 2, 1))
     if len(db.get_takes_by_id(connection, 't1810005', 3)) == 0:
         connection.execute(db.INSERT_INITIAL_TAKES, ('t1810005', 3, 1))
-    if len(db.get_takes_by_id(connection, 'u1810087', 0)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810087', 0, 1))
-    if len(db.get_takes_by_id(connection, 'u1810036', 0)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810036', 0, 1))
-    if len(db.get_takes_by_id(connection, 'u1810075', 1)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810075', 1, 1))
-    if len(db.get_takes_by_id(connection, 'u1810087', 1)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810087', 1, 1))
-    if len(db.get_takes_by_id(connection, 'u1810036', 2)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810036', 2, 1))
-    if len(db.get_takes_by_id(connection, 'u1810075', 2)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810075', 2, 1))
-    if len(db.get_takes_by_id(connection, 'u1810197', 3)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810197', 3, 1))
-    if len(db.get_takes_by_id(connection, 'u1810184', 3)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810184', 3, 1))
-    if len(db.get_takes_by_id(connection, 'u1810197', 0)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810197', 0, 1))
-    if len(db.get_takes_by_id(connection, 'u1810184', 0)) == 0:
-        connection.execute(db.INSERT_INITIAL_TAKES, ('u1810184', 0, 1))
+
+    #enrolling students
+
+    for student in ['u1810087','u1810036','u1810075','u1810197','u1810184']:
+        for course in range(5):
+            if len(db.get_takes_by_id(connection, student, course)) == 0:
+                connection.execute(db.INSERT_INITIAL_TAKES, (student, course, 1))
