@@ -87,7 +87,7 @@ class FaceRecognitionWindow(QMainWindow):
 
     def authenticate(self, img):
         time.sleep(1)
-        response = face_recognition(self.user_id, img)
+        response = face_recognition(self.username, img)
         return response
 
     def select_camera(self, i):
