@@ -36,7 +36,7 @@ class ProcessingWindow(QDialog):
 
         self.window_loader = WindowLoader.WindowManager.get_instance()
         self.setWindowTitle("Your photo is being processed")
-        self.setGeometry(500, 200, 600, 450)
+        self.setGeometry(700, 300, 600, 450)
         flags = QtCore.Qt.WindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         self.setWindowFlags(flags)
         vbox = QVBoxLayout()

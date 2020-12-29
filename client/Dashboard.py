@@ -20,6 +20,9 @@ class DashboardWindow(QWidget):
         if resp['result'] == 'ok':
             subject_list = resp['courses']
 
+        flags = QtCore.Qt.WindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(flags)
+
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
