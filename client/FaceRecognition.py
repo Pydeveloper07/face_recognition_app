@@ -73,6 +73,7 @@ class FaceRecognitionWindow(QMainWindow):
 
     def process_captured_image(self, img):
         response = self.authenticate(self.namePic)
+        os.remove(self.namePic)
         if response['result'] == "ok":
             f_name, l_name = self.name.split(' ')
             self.window_loader.load_dashboard_window(f_name, l_name, self.username)
