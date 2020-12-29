@@ -26,6 +26,8 @@ class DashboardWindow(QWidget):
         self.window_loader = WindowLoader.WindowManager.get_instance()
         self.subject_list = []
         self.init_subject_list()
+        self.page_id_dict = {}
+        self.init_page_id_dict()
         self.stacked_widget = QStackedWidget(self)
         self.vbox = QVBoxLayout()
         self.btn_group = QButtonGroup()
@@ -36,11 +38,15 @@ class DashboardWindow(QWidget):
         self.init_home()
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
-        self.current_subject_id = -1
-
     def init_subject_list(self):
         for subject in subject_list:
             self.subject_list.append(subject["name"])
+
+    def init_page_id_dict(self):
+        _id = 0
+        for subject in subject_list:
+            self.page_id_dict[subject['id']] = _id
+            _id += 1
 
     def init_ui(self):
         desktop = QApplication.desktop()
@@ -106,20 +112,22 @@ class DashboardWindow(QWidget):
             f_vbox.addWidget(f_video_player, alignment=QtCore.Qt.AlignHCenter)
             # f_vbox.addWidget(f_label_content)
             vbox.addWidget(close_btn, alignment=QtCore.Qt.AlignRight)
-            self.stacked_widget.insertWidget(subject["id"], page)
+
+            _id = self.page_id_dict[subject['id']]
+            self.stacked_widget.insertWidget(_id, page)
 
     def close_subject_frame(self):
 
-        subject_id = self.stacked_widget.currentIndex()
         username = self.username
+        page_id = self.stacked_widget.currentIndex()
+        subject_id = self.subject_id_from_page_id(page_id)
+
         widget = self.stacked_widget.currentWidget()
         player = widget.findChild(MediaPlayer, 'player')
         player.stop()
 
         # Use above variables to set how much time user spent for this subject
         util_funcs.exit_course(username, subject_id)
-
-        self.current_subject_id = -1
         self.stacked_widget.setCurrentIndex(len(subject_list))
 
     def init_home(self):
@@ -176,7 +184,9 @@ class DashboardWindow(QWidget):
             push_btn.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
             push_btn.setStyleSheet("border:none; border-radius: 3px; padding: 8px; background: blue;"
                                    "color:white")
-            self.btn_group.addButton(push_btn, subject_list[i]["id"])
+
+            _id = self.page_id_dict[subject_list[i]["id"]]
+            self.btn_group.addButton(push_btn, _id)
             f_vbox.addWidget(push_btn, alignment=QtCore.Qt.AlignCenter)
             f_vspacer = QSpacerItem(20, 40, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
             f_vbox.addSpacerItem(f_vspacer)
@@ -191,8 +201,9 @@ class DashboardWindow(QWidget):
 
     def init_page(self, id):
         username = self.username
-        self.current_subject_id = id
-        resp = util_funcs.enter_course(username, id)
+        subject_id = self.subject_id_from_page_id(id)
+
+        resp = util_funcs.enter_course(username, subject_id)
         self.stacked_widget.setCurrentIndex(id)
 
     def log_out(self):
@@ -203,3 +214,9 @@ class DashboardWindow(QWidget):
     def closeEvent(self, event):
         self.window_loader.CloseConnection()
         event.accept()
+
+    def subject_id_from_page_id(self, _id):
+        for k, v in self.page_id_dict.items():
+            if v == _id:
+                return k
+        return -1
