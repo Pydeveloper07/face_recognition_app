@@ -43,10 +43,10 @@ print(utils.parse_request(
 #         "teacher_id": "t1810002"})
 # ))
 
-# print(utils.parse_request(
-#     json.dumps({
-#         "action": "get_students_enter_exit_times",
-#         "course_id": 0,
-#         "student_id": 'u1810087'
-#     })
-# ))
+print(utils.parse_request(
+    json.dumps({
+        "action": "get_students_enter_exit_times",
+        "course_id": 0,
+        "student_id": 'u1810087'
+    })
+))

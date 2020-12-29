@@ -24,10 +24,10 @@ CREATE_TIME_TRACKER_TABLE = """
                                             FOREIGN KEY (course_id) REFERENCES courses (id) ON UPDATE SET NULL);
 """
 
-REGISTER_ENTER_TIME = "INSERT INTO time_tracker (student_id, course_id, enter_time) VALUES (?,?, datetime('now'));"
+REGISTER_ENTER_TIME = "INSERT INTO time_tracker (student_id, course_id, enter_time) VALUES (?,?, datetime('now', 'localtime'));"
 REGISTER_EXIT_TIME = """
     UPDATE time_tracker
-    SET exit_time = datetime('now')
+    SET exit_time = datetime('now', 'localtime')
     WHERE
         (student_id, course_id) = (?,?) AND exit_time IS NULL 
 """

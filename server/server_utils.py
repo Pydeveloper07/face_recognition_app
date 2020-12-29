@@ -146,6 +146,7 @@ def face_recognition(user_id, file):
     else:
         return '{"result": "failed"}'
 
+
 def get_students_enter_exit_times(student_id, course_id):
     enter_exit_times = db.get_students_enter_exit_times(db_connection, student_id, course_id)
 
