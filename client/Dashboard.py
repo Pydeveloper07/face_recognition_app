@@ -2,11 +2,11 @@ from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, \
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget
-
+import pathlib
 import WindowLoader
 import util_funcs
 from MediaPlayer import MediaPlayer
-from models import video_file
+video_file = '{}'.format(pathlib.Path().absolute() / "media/sample_video.mkv")
 
 subject_list = []
 
