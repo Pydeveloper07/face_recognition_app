@@ -16,53 +16,8 @@ pid_t childpid;
 struct sockaddr_in serv_addr, cli_addr;
 socklen_t clilen;
 
-void ReceiveFile()
-{
-	FILE *fp;
-	int bytesReceived = 0;
-	char recvBuff[1024];
-	char fname[100];
-	int received_int = 0;
-	read(newsockfd, fname, 256);
-	read(newsockfd, &received_int, sizeof(received_int));
-	//strcat(fname,"AK");
-	printf("File Name: %s\n",fname);
-	printf("Receiving file...");
-   	fp = fopen(fname, "ab");
-    	if(NULL == fp)
-    	{
-       	 printf("Error opening file");
-    	}
 
-	long double sz=1;
-    /* Receive data in chunks of 1024 bytes */
-
-    int allbytes = 0;
-    int k = 0;
-
-    	while(1)
-    	{
-    	    bytesReceived = read(newsockfd, recvBuff, 1024);
-   	        allbytes+=bytesReceived;
-   	        if (allbytes==ntohl(received_int))
-   	        {
-   	     	    break;
-   	        }
-
-   	        sz++;
-
-            fwrite(recvBuff, 1,bytesReceived,fp);
-         }
-
-        if(bytesReceived < 0)
-         {
-         	printf("\n Read Error \n");
-         }
-        printf("\nCompleted.\n");
-        fclose(fp);
-}
-
-char* ReadDatShit()
+char* ReadData()
 {
 	int buflen = 0;
 	int nn;
@@ -117,7 +72,7 @@ void NewProcess()
 	printf("Connection accepted from %s:%d\n", inet_ntoa(cli_addr.sin_addr),ntohs(cli_addr.sin_port));
 }
 
-void SendDatShit(char *buffer)
+void SendData(char *buffer)
 {
 
     int nn;
