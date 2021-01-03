@@ -93,7 +93,7 @@ void SendDatShit(char *buffer)
 
 }
 
-char* ReadDatShit()
+char* ReadData()
 {
     int buflen = 0;
 	int nn;

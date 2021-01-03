@@ -11,8 +11,8 @@ c_lib = ctypes.cdll.LoadLibrary(libname)
 libc = ctypes.CDLL(ctypes.util.find_library('c'))
 
 # Setting args and return types
-c_lib.ReadDatShit.restype = ctypes.c_void_p
-c_lib.SendDatShit.argtypes = [ctypes.POINTER(ctypes.c_char), ]
+c_lib.ReadData.restype = ctypes.c_void_p
+c_lib.SendData.argtypes = [ctypes.POINTER(ctypes.c_char), ]
 c_lib.Forker.restype = ctypes.c_int
 libc.free.argtypes = (ctypes.c_void_p,)
 
@@ -28,7 +28,7 @@ while True:
         c_lib.Closesockfd()
 
         while True:
-            _result = c_lib.ReadDatShit()
+            _result = c_lib.ReadData()
 
             if _result is None:
                 continue
@@ -48,5 +48,5 @@ while True:
                     print("error occurred while parsing request")
 
             if output != '':
-                c_lib.SendDatShit(output.encode("ISO-8859–1"))
+                c_lib.SendData(output.encode("ISO-8859–1"))
 c_lib.Closenewsockdf()

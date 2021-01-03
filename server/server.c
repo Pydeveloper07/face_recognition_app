@@ -62,7 +62,7 @@ void ReceiveFile()
         fclose(fp);
 }
 
-char* ReadDatShit()
+char* ReadData()
 {
 	int buflen = 0;
 	int nn;
@@ -117,7 +117,7 @@ void NewProcess()
 	printf("Connection accepted from %s:%d\n", inet_ntoa(cli_addr.sin_addr),ntohs(cli_addr.sin_port));
 }
 
-void SendDatShit(char *buffer)
+void SendData(char *buffer)
 {
 
     int nn;
