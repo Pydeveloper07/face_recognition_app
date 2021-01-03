@@ -11,8 +11,7 @@ libc = ctypes.CDLL(ctypes.util.find_library('c'))
 
 # Setting args and return types
 c_lib.ReadData.restype = ctypes.c_void_p
-c_lib.SendDatShit.argtypes = [ctypes.POINTER(ctypes.c_char), ]
-c_lib.SendFileToClient.argtypes = [ctypes.POINTER(ctypes.c_char), ]
+c_lib.SendData.argtypes = [ctypes.POINTER(ctypes.c_char), ]
 libc.free.argtypes = (ctypes.c_void_p,)
 
 
@@ -21,7 +20,7 @@ def RunMain():
 
 
 def SendData(input):
-    c_lib.SendDatShit(input.encode('ISO-8859–1'))
+    c_lib.SendData(input.encode('ISO-8859–1'))
 
 
 def ReadData():
@@ -30,8 +29,6 @@ def ReadData():
     libc.free(_result)
     return value
 
-def SendFile(input):
-    c_lib.SendFileToClient(input.encode('ISO-8859–1'))
 
 
 def CloseAll():

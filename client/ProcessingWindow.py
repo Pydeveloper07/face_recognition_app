@@ -61,7 +61,7 @@ class ProcessingWindow(QDialog):
             self.close()
         else:
             self.show_error("Authentication Error",
-                            f"You are not a student with ID {self.username}. Get the fuck out of here")
+                            f"You are not a student with ID {self.username}. Make sure your face is in the camera!")
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if os.path.isfile(self.namePic):
