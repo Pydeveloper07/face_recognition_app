@@ -95,6 +95,6 @@ def seed_takes(connection):
     #enrolling students
 
     for student in ['u1810087','u1810036','u1810075','u1810197','u1810184']:
-        for course in range(5):
+        for course in range(4):
             if len(db.get_takes_by_id(connection, student, course)) == 0:
                 connection.execute(db.INSERT_INITIAL_TAKES, (student, course, 1))
